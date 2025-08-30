@@ -7,13 +7,13 @@ dotenv.config({
 const cors = require('cors');
 const ApiError = require('./utils/apiError');
 const globalError = require('./middlewares/errorMiddleware');
-const dbConnection = require("./config/database");
+const sequelize = require("./config/database");
 const categoryRoute = require("./routes/categoryRoutes");
 
 
-
 //Connect with db
-dbConnection();
+sequelize.authenticate()
+  .then(() => console.log('DBconnected✅'))
 
 
 //express app

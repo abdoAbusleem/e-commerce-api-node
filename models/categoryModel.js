@@ -1,22 +1,51 @@
-const mongoose = require("mongoose");
+const sequelize = require("../config/database")
+const { DataTypes, Model } = require("sequelize")
+const { v4: uuidv4 } = require('uuid');
+const slugify = require("sequelize-slugify");
 
-const categorySchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "Category name is required"],
-    unique: [true , "Category name must be unique"],
-    minlength: [3, "Category name must be at least 3 characters"],
-    maxlength: [32, "Category name must be at most 32 characters"]
+
+
+
+class Category extends Model { }
+
+
+Category.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      defaultValue: uuidv4,
+      unique: true,
+    },
+    name: {
+      type: DataTypes.STRING(32),
+      allowNull: false,
+      unique: {
+        msg: 'Category name already exists',
+      },
+    },
+    slug: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: true,
+    },
+    image: {
+      type: DataTypes.STRING,
+      allowNull: true, 
+    },
   },
-  slug: {
-    type: String,
-    lowercase: true
-  },
-  image: String
-}, {
-  timestamps: true
+  {
+    sequelize,
+    tableName: "categories",
+    timestamps: true,
+  }
+);
+
+slugify.slugifyModel(Category, {
+  source: ['name'],
+  target: 'slug',
+  replacement: '-',
+  lower: true,
 });
 
-const CategoryModel = mongoose.model("Category", categorySchema);
-
-module.exports = CategoryModel;
+module.exports = Category;

@@ -1,7 +1,7 @@
 const Category = require("../models/categoryModel");
-const slugify = require('slugify');
 const asyncHandler = require('express-async-handler'); 
 const ApiError = require('../utils/apiError');
+const { where } = require("sequelize");
 
 
 // @des     Create Category
@@ -11,7 +11,6 @@ exports.createCategory = asyncHandler(async (req, res) => {
   const { name } = req.body;
   const category = await Category.create({
     name,
-    slug: slugify(name)
   });
   res.status(201).json(category);
 }); 
@@ -24,8 +23,15 @@ exports.getCategories = asyncHandler(async (req, res) => {
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || 5;
   const skip = (page - 1) * limit; 
-  const listOfCategories = await Category.find().skip(skip).limit(limit);
-  res.status(200).json({results : listOfCategories.length , page ,data : listOfCategories});
+
+  const listOfCategories = await Category.findAll({
+    limit,
+    offset: skip,
+  })
+  const total = await Category.count();
+
+
+  res.status(200).json({total : total , page ,data : listOfCategories});
 });
 
 
@@ -34,10 +40,13 @@ exports.getCategories = asyncHandler(async (req, res) => {
 // @access  Public
 exports.getCategoryById = asyncHandler(async (req, res , next) => {
   const { id } = req.params;
-  const category = await Category.findById(id);
+
+
+  const category = await Category.findByPk(id);
+
   // For getCategoryById
   if(!category){
-    return next(new ApiError(`No category for this id ${id}`, 404));
+    return next(new ApiError(`No category found for this id ${id}`, 404));
   }
   res.status(200).json({ data: category });
   
@@ -49,16 +58,18 @@ exports.getCategoryById = asyncHandler(async (req, res , next) => {
 // @access  Private
 exports.updateCategory = asyncHandler(async (req, res , next) => {
   const { id } = req.params;
-  const { name } = req.body;
-  const category = await Category.findByIdAndUpdate(id, {
-    name,
-    slug: slugify(name)
-  }, {
-    new: true
-  });
+  const {name} = req.body;
+
+  const category = await Category.findByPk(id);
+
   if(!category){
     return next(new ApiError(`No category for this id ${id}`, 404));
   }
+  await category.update({name});
+
+  await category.reload();
+
+
   res.status(200).json({ data: category });
 });
 
@@ -68,9 +79,13 @@ exports.updateCategory = asyncHandler(async (req, res , next) => {
 // @access  Private
 exports.deleteCategory = asyncHandler(async (req, res , next) => {
   const { id } = req.params;
-  const category = await Category.findByIdAndDelete(id);
+  const category = await Category.findByPk(id);
+
   if(!category){
     return next(new ApiError(`No category for this id ${id}`, 404));
   }
+  
+  await category.destroy();
+
   res.status(204).send();
 });
