@@ -9,7 +9,7 @@ const ApiError = require('./utils/apiError');
 const globalError = require('./middlewares/errorMiddleware');
 const sequelize = require("./config/database");
 const categoryRoute = require("./routes/categoryRoutes");
-
+const subCategoryRoute = require("./routes/subCategoryRoutes"); 
 
 //Connect with db
 sequelize.authenticate()
@@ -25,13 +25,14 @@ app.use(cors());
 
 if(process.env.NODE_ENV === "development"){
   app.use(morgan("dev"));
-  console.log(`mode: ${process.env.NODE_ENV}`);
+  console.log(`mode: ${process.env.NODE_ENV}`); 
 } 
 
 
  
 //Mount Routes
 app.use("/api/v1/categories", categoryRoute); 
+app.use("/api/v1/subcategories", subCategoryRoute); 
 
 
 
@@ -58,4 +59,4 @@ process.on("unhandledRejection", (err) => {
     console.error(`Shutting down...`);
     process.exit(1);
   });
-});
+}); 

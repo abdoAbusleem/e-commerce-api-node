@@ -1,7 +1,6 @@
-const Category = require("../models/categoryModel");
+const { Category } = require("../models/index");
 const asyncHandler = require('express-async-handler'); 
 const ApiError = require('../utils/apiError');
-const { where } = require("sequelize");
 
 
 // @des     Create Category
@@ -12,7 +11,7 @@ exports.createCategory = asyncHandler(async (req, res) => {
   const category = await Category.create({
     name,
   });
-  res.status(201).json(category);
+  res.status(201).json({data : category});
 }); 
 
 

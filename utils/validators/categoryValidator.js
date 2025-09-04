@@ -13,6 +13,7 @@ exports.createCategoryValidator = [
     .isLength({ min: 3 })
     .withMessage('Too short category name')
     .isLength({ max: 32 })
+    .trim()
     .withMessage('Too long category name'),
   validatorMiddleware,
 ];
