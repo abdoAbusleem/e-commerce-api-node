@@ -1,5 +1,7 @@
 const Category = require('./categoryModel');
 const SubCategory = require('./subCategoryModel');
+const Brand = require('./brandModel');
+
 
 // تعريف العلاقات بين الموديلات
 Category.hasMany(SubCategory, {
@@ -13,4 +15,4 @@ SubCategory.belongsTo(Category, {
 });
 
 // تصدير الموديلات مع العلاقات
-module.exports = { Category, SubCategory };
+module.exports = { Category, SubCategory, Brand };

@@ -1,49 +1,46 @@
-const sequelize = require("../config/database");
 const { DataTypes, Model } = require("sequelize");
 const { v4: uuidv4 } = require("uuid");
 const slugify = require("sequelize-slugify");
+const sequelize = require("../config/database");
 
-class SubCategory extends Model {}
+class Brand extends Model {}
 
-SubCategory.init(
+Brand.init(
   {
     id: {
       type: DataTypes.UUID,
-      primaryKey: true,
       defaultValue: uuidv4,
+      primaryKey: true,
       unique: true,
     },
     name: {
       type: DataTypes.STRING(32),
       allowNull: false,
-      unique: true
+      unique: true,
     },
     slug: {
       type: DataTypes.STRING,
       allowNull: true,
       unique: true,
     },
-    categoryId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      references: {
-        model: "categories", 
-        key: "id",
-      },
+    image: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   },
   {
     sequelize,
-    tableName: "subcategories",
+    tableName: "brands",
     timestamps: true,
   }
 );
 
-slugify.slugifyModel(SubCategory, {
+// Generate slug from name
+slugify.slugifyModel(Brand, {
   source: ['name'],
   target: 'slug',
   replacement: '-',
   lower: true,
 });
 
-module.exports = SubCategory;
+module.exports = Brand;

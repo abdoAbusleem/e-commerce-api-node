@@ -20,9 +20,7 @@ Category.init(
     name: {
       type: DataTypes.STRING(32),
       allowNull: false,
-      unique: {
-        msg: 'Category name already exists',
-      },
+      unique: true
     },
     slug: {
       type: DataTypes.STRING,
