@@ -1,7 +1,7 @@
-const sequelize = require("../config/database");
-const { DataTypes, Model } = require("sequelize");
-const { v4: uuidv4 } = require("uuid");
-const slugify = require("sequelize-slugify");
+const { DataTypes, Model } = require('sequelize');
+const { v4: uuidv4 } = require('uuid');
+const slugify = require('sequelize-slugify');
+const sequelize = require('../config/database');
 
 class SubCategory extends Model {}
 
@@ -16,7 +16,7 @@ SubCategory.init(
     name: {
       type: DataTypes.STRING(32),
       allowNull: false,
-      unique: true
+      unique: true,
     },
     slug: {
       type: DataTypes.STRING,
@@ -27,14 +27,14 @@ SubCategory.init(
       type: DataTypes.UUID,
       allowNull: false,
       references: {
-        model: "categories", 
-        key: "id",
+        model: 'categories',
+        key: 'id',
       },
     },
   },
   {
     sequelize,
-    tableName: "subcategories",
+    tableName: 'subcategories',
     timestamps: true,
   }
 );

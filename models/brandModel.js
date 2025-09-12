@@ -1,7 +1,7 @@
-const { DataTypes, Model } = require("sequelize");
-const { v4: uuidv4 } = require("uuid");
-const slugify = require("sequelize-slugify");
-const sequelize = require("../config/database");
+const { DataTypes, Model } = require('sequelize');
+const { v4: uuidv4 } = require('uuid');
+const slugify = require('sequelize-slugify');
+const sequelize = require('../config/database');
 
 class Brand extends Model {}
 
@@ -30,7 +30,7 @@ Brand.init(
   },
   {
     sequelize,
-    tableName: "brands",
+    tableName: 'brands',
     timestamps: true,
   }
 );

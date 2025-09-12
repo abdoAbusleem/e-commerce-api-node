@@ -1,13 +1,9 @@
-const sequelize = require("../config/database")
-const { DataTypes, Model } = require("sequelize")
+const { DataTypes, Model } = require('sequelize');
 const { v4: uuidv4 } = require('uuid');
-const slugify = require("sequelize-slugify");
+const slugify = require('sequelize-slugify');
+const sequelize = require('../config/database');
 
-
-
-
-class Category extends Model { }
-
+class Category extends Model {}
 
 Category.init(
   {
@@ -20,7 +16,7 @@ Category.init(
     name: {
       type: DataTypes.STRING(32),
       allowNull: false,
-      unique: true
+      unique: true,
     },
     slug: {
       type: DataTypes.STRING,
@@ -29,12 +25,12 @@ Category.init(
     },
     image: {
       type: DataTypes.STRING,
-      allowNull: true, 
+      allowNull: true,
     },
   },
   {
     sequelize,
-    tableName: "categories",
+    tableName: 'categories',
     timestamps: true,
   }
 );

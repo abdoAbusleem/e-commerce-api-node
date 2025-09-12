@@ -1,7 +1,6 @@
 const { check } = require('express-validator');
 const validatorMiddleware = require('../../middlewares/validatorMiddlleware');
 
-
 exports.getSubCategoryValidator = [
   check('id').isUUID().withMessage('Invalid Subcategory id format'),
   validatorMiddleware,

@@ -1,10 +1,10 @@
-const handleSequelizeError = require("../utils/sequelizeErrorHandler")
+const handleSequelizeError = require('../utils/sequelizeErrorHandler');
 
 const globalError = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
-  
-  //handle sequelize error
+
+  // handle sequelize error
   const sequelizeHandled = handleSequelizeError(err);
   if (sequelizeHandled) {
     err.statusCode = sequelizeHandled.statusCode;
@@ -18,20 +18,18 @@ const globalError = (err, req, res, next) => {
   }
 };
 
-const sendErrorForDev = (err, res) => {
-  return res.status(err.statusCode).json({
+const sendErrorForDev = (err, res) =>
+  res.status(err.statusCode).json({
     status: err.status,
     error: err,
     message: err.message,
     stack: err.stack,
   });
-};
 
-const sendErrorForProd = (err, res) => {
-  return res.status(err.statusCode).json({
+const sendErrorForProd = (err, res) =>
+  res.status(err.statusCode).json({
     status: err.status,
     message: err.message,
   });
-};
 
 module.exports = globalError;

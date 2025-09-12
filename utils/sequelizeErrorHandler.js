@@ -1,10 +1,15 @@
-const { ValidationError, UniqueConstraintError, ForeignKeyConstraintError, DatabaseError } = require("sequelize");
+const {
+  ValidationError,
+  UniqueConstraintError,
+  ForeignKeyConstraintError,
+  DatabaseError,
+} = require('sequelize');
 
 function handleSequelizeError(err) {
   if (err instanceof ValidationError) {
     return {
       statusCode: 400,
-      message: err.errors.map(e => e.message).join(", "),
+      message: err.errors.map(e => e.message).join(', '),
     };
   }
 
@@ -25,7 +30,7 @@ function handleSequelizeError(err) {
   if (err instanceof DatabaseError) {
     return {
       statusCode: 400,
-      message: "Database error occurred. Please try again later.",
+      message: 'Database error occurred. Please try again later.',
     };
   }
 
