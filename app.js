@@ -1,25 +1,19 @@
 const express = require('express');
 const morgan = require('morgan');
-const dotenv = require('dotenv');
-dotenv.config({
-  path: 'config.env',
-});
 const cors = require('cors');
+
 const ApiError = require('./utils/apiError');
 const globalError = require('./middlewares/errorMiddleware');
-const sequelize = require('./config/database');
-const categoryRoute = require('./routes/categoryRoutes');
-const subCategoryRoute = require('./routes/subCategoryRoutes');
-const brandRoute = require('./routes/brandRoutes');
 
-// Connect with db
-sequelize.authenticate().then(() => console.log('DBconnected✅'));
+// Routes
+const categoryRoute = require('./routes/category.routes');
+const subCategoryRoute = require('./routes/subcategory.routes');
+const brandRoute = require('./routes/brand.routes');
 
-// express app
 const app = express();
 
+// Middleware
 app.use(express.json());
-
 app.use(cors());
 
 if (process.env.NODE_ENV === 'development') {
@@ -32,26 +26,13 @@ app.use('/api/v1/categories', categoryRoute);
 app.use('/api/v1/subcategories', subCategoryRoute);
 app.use('/api/v1/brands', brandRoute);
 
-// handle unhandled routes
+// Handle unhandled routes
 app.use((req, res, next) => {
   const err = new ApiError(`Route not found: ${req.originalUrl}`, 400);
   next(err);
 });
 
-// global error handling middleware for operational errors
+// Global error handler
 app.use(globalError);
 
-// server
-const port = process.env.PORT || 8000;
-const server = app.listen(port, () => {
-  console.log(`app is running on port ${port}`);
-});
-
-// Handle rejection outside express
-process.on('unhandledRejection', err => {
-  console.error(`unhandledRejection Errors: ${err.name} | ${err.message}`);
-  server.close(() => {
-    console.error('Shutting down...');
-    process.exit(1);
-  });
-});
+module.exports = app;

@@ -1,5 +1,5 @@
 const { check } = require('express-validator');
-const validatorMiddleware = require('../../middlewares/validatorMiddlleware');
+const validatorMiddleware = require('../middlewares/validatorMiddlleware');
 
 exports.getBrandValidator = [
   check('id').isUUID().withMessage('Invalid Brand id format'),
