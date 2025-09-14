@@ -5,12 +5,12 @@ const {
   getSubCategoryById,
   updateSubCategory,
   setCategoryIdToBody,
-} = require('../services/subCategoryService');
+} = require('../controllers/subcategory.controller');
 const {
   createSubCategoryValidator,
   getSubCategoryValidator,
   updateSubCategoryValidator,
-} = require('../utils/validators/subCategoryValidator');
+} = require('../validators/subCategoryValidator');
 
 const router = express.Router({ mergeParams: true });
 

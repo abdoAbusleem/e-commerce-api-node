@@ -1,5 +1,5 @@
 const { check } = require('express-validator');
-const validatorMiddleware = require('../../middlewares/validatorMiddlleware');
+const validatorMiddleware = require('../middlewares/validatorMiddlleware');
 
 exports.getCategoryValidator = [
   check('id').isUUID().withMessage('Invalid category id format'),

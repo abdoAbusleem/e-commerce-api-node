@@ -1,5 +1,4 @@
 const { DataTypes, Model } = require('sequelize');
-const { v4: uuidv4 } = require('uuid');
 const slugify = require('sequelize-slugify');
 const sequelize = require('../config/database');
 
@@ -9,7 +8,7 @@ Brand.init(
   {
     id: {
       type: DataTypes.UUID,
-      defaultValue: uuidv4,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
       unique: true,
     },

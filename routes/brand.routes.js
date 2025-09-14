@@ -5,13 +5,13 @@ const {
   createBrand,
   updateBrand,
   deleteBrand,
-} = require('../services/brandService');
+} = require('../controllers/brand.controller');
 const {
   getBrandValidator,
   createBrandValidator,
   updateBrandValidator,
   deleteBrandValidator,
-} = require('../utils/validators/brandValidator');
+} = require('../validators/brandValidator');
 
 const router = express.Router();
 

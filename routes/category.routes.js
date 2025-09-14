@@ -5,14 +5,14 @@ const {
   getCategoryById,
   updateCategory,
   deleteCategory,
-} = require('../services/categoryService');
+} = require('../controllers/category.controller');
 const {
   getCategoryValidator,
   createCategoryValidator,
   updateCategoryValidator,
   deleteCategoryValidator,
-} = require('../utils/validators/categoryValidator');
-const subCategoryRoutes = require('./subCategoryRoutes');
+} = require('../validators/categoryValidator');
+const subCategoryRoutes = require('./subcategory.routes');
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler');
-const { Brand } = require('../models/index');
+const { Brand } = require('../models/associations');
 const ApiError = require('../utils/apiError');
 
 // @des     Create Brand
