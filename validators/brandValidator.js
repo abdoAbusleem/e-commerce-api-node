@@ -1,4 +1,4 @@
-const { check } = require('express-validator');
+const { check, body } = require('express-validator');
 const validatorMiddleware = require('../middlewares/validatorMiddlleware');
 
 exports.getBrandValidator = [
@@ -7,7 +7,7 @@ exports.getBrandValidator = [
 ];
 
 exports.createBrandValidator = [
-  check('name')
+  body('name')
     .notEmpty()
     .withMessage('Brand required')
     .isLength({ min: 3 })

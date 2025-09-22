@@ -1,50 +1,38 @@
-const brandRepository = require('../repositories/brand.repository');
-const ApiError = require('../utils/apiError');
+const { Brand } = require('../models/associations');
 
-class BrandService {
-  async createBrand(data) {
-    const brand = await brandRepository.create(data);
-    return brand;
+class BrandRepository {
+  create(data, options = {}) {
+    return Brand.create(data, options);
   }
 
-  async getAllBrands(queryParams) {
-    const page = Math.max(1, parseInt(queryParams.page) || 1);
-    const limit = Math.max(1, Math.min(100, parseInt(queryParams.limit) || 5));
+  findAll(options = {}) {
+    const { page = 1, limit = 5, filter = {}, order = [['createdAt', 'DESC']] } = options;
+    const offset = (page - 1) * limit;
 
-    const result = await brandRepository.findAll({ page, limit });
-
-    return {
-      brands: result.rows,
-      pagination: {
-        total: result.count,
-        perPage: limit,
-        currentCount: result.rows.length,
-        currentPage: page,
-      },
-    };
+    return Brand.findAndCountAll({
+      where: filter,
+      order,
+      limit,
+      offset,
+    });
   }
 
-  async getBrandById(id) {
-    const brand = await brandRepository.findById(id);
-    if (!brand) throw new ApiError(`No brand found for this id ${id}`, 404);
-    return brand;
+  findById(id, options = {}) {
+    return Brand.findByPk(id, options);
   }
 
-  async updateBrand(id, data) {
-    const brand = await brandRepository.findById(id);
-    if (!brand) throw new ApiError(`No brand found for this id: ${id}`, 404);
-
-    const updatedBrand = await brandRepository.update(brand, data);
-    return updatedBrand;
+  update(id, data, options = {}) {
+    return Brand.update(data, { where: { id }, ...options });
   }
 
-  async deleteBrand(id) {
-    const brand = await brandRepository.findById(id);
-    if (!brand) throw new ApiError(`No brand found for this id ${id}`, 404);
+  delete(id, options = {}) {
+    return Brand.destroy({ where: { id }, ...options });
+  }
 
-    const deletedBrand = await brandRepository.delete(brand);
-    return deletedBrand;
+  async exists(id, options = {}) {
+    const count = await Brand.count({ where: { id }, ...options });
+    return count > 0;
   }
 }
 
-module.exports = new BrandService();
+module.exports = new BrandRepository();

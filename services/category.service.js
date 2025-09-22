@@ -3,8 +3,7 @@ const ApiError = require('../utils/apiError');
 
 class CategoryService {
   async createCategory(data) {
-    const { name } = data;
-    const category = await categoryRepository.create({ name });
+    const category = await categoryRepository.create(data);
     return category;
   }
 
@@ -28,30 +27,24 @@ class CategoryService {
   async getCategoryById(id) {
     const category = await categoryRepository.findById(id);
     if (!category) throw new ApiError(`No category found for this id ${id}`, 404);
+
     return category;
   }
 
   async updateCategory(id, data) {
-    const { name } = data;
-
-    const category = await categoryRepository.findById(id);
+    const category = await categoryRepository.exists(id);
     if (!category) throw new ApiError(`No category found for this id: ${id}`, 404);
 
-    const updatedCategory = await categoryRepository.update(id, { name });
-    return updatedCategory;
+    await categoryRepository.update(id, data);
+    return categoryRepository.findById(id);
   }
 
   async deleteCategory(id) {
-    const category = await categoryRepository.findById(id);
-    if (!category) throw new ApiError(`No category for this id ${id}`, 404);
+    const category = await categoryRepository.exists(id);
+    if (!category) throw new ApiError(`No category found for this id ${id}`, 404);
 
-    const deletedCategory = await categoryRepository.delete(id);
-    return deletedCategory;
-  }
-
-  async checkCategoryExists(id) {
-    const exists = await categoryRepository.categoryExists(id);
-    return exists;
+    await categoryRepository.delete(id);
+    return { message: 'Category deleted successfully' };
   }
 }
 

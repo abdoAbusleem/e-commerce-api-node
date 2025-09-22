@@ -1,5 +1,7 @@
-const { check } = require('express-validator');
+const { check, body } = require('express-validator');
 const validatorMiddleware = require('../middlewares/validatorMiddlleware');
+const { Category } = require('../models/associations');
+const { validateEntityExists } = require('../helpers/validationHelpers');
 
 exports.getSubCategoryValidator = [
   check('id').isUUID().withMessage('Invalid Subcategory id format'),
@@ -7,7 +9,7 @@ exports.getSubCategoryValidator = [
 ];
 
 exports.createSubCategoryValidator = [
-  check('name')
+  body('name')
     .notEmpty()
     .trim()
     .withMessage('SubCategory required')
@@ -15,16 +17,25 @@ exports.createSubCategoryValidator = [
     .withMessage('Too short Subcategory name')
     .isLength({ max: 32 })
     .withMessage('Too long Subcategory name'),
-  check('categoryId')
+
+  body('categoryId')
     .notEmpty()
     .withMessage('subCategory must be belong to category')
     .isUUID()
-    .withMessage('Invalid Category id format'),
+    .withMessage('Invalid Category id format')
+    .custom(validateEntityExists(Category, 'categoryId')),
   validatorMiddleware,
 ];
 
 exports.updateSubCategoryValidator = [
   check('id').isUUID().withMessage('Invalid Subcategory id format'),
+  body('categoryId')
+    .optional()
+    .notEmpty()
+    .withMessage('subCategory must be belong to category')
+    .isUUID()
+    .withMessage('Invalid Category id format')
+    .custom(validateEntityExists(Category, 'categoryId')),
   validatorMiddleware,
 ];
 

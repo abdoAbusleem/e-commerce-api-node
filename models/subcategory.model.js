@@ -1,5 +1,4 @@
 const { DataTypes, Model } = require('sequelize');
-const { v4: uuidv4 } = require('uuid');
 const slugify = require('sequelize-slugify');
 const sequelize = require('../config/database');
 
@@ -10,7 +9,7 @@ SubCategory.init(
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
-      defaultValue: uuidv4,
+      defaultValue: DataTypes.UUIDV4,
       unique: true,
     },
     name: {

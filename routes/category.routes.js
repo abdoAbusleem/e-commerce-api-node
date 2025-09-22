@@ -11,6 +11,7 @@ const {
   createCategoryValidator,
   updateCategoryValidator,
   deleteCategoryValidator,
+  validateCategoryIdParam,
 } = require('../validators/categoryValidator');
 const subCategoryRoutes = require('./subcategory.routes');
 
@@ -18,7 +19,7 @@ const router = express.Router();
 
 // Nested route
 // Create subcategory on specific category
-router.use('/:categoryId/subcategories', subCategoryRoutes);
+router.use('/:categoryId/subcategories', validateCategoryIdParam, subCategoryRoutes);
 
 router.route('/').post(createCategoryValidator, createCategory).get(getCategories);
 router

@@ -1,47 +1,38 @@
 const { Category } = require('../models/associations');
 
 class CategoryRepository {
-  async create(data) {
-    const category = await Category.create(data);
-    return category;
+  create(data, options = {}) {
+    return Category.create(data, options);
   }
 
-  async findAll(options = {}) {
-    const { page = 1, limit = 5, order = [['createdAt', 'DESC']] } = options;
+  findAll(options = {}) {
+    const { page = 1, limit = 5, order = [['createdAt', 'DESC']], where = {} } = options;
     const offset = (page - 1) * limit;
 
-    const result = await Category.findAndCountAll({
+    return Category.findAndCountAll({
+      where,
       order,
       limit,
       offset,
+      ...options,
     });
-    return result;
   }
 
-  async findById(id) {
-    const category = await Category.findByPk(id);
-    return category;
+  findById(id, options = {}) {
+    return Category.findByPk(id, options);
   }
 
-  async update(id, data) {
-    const category = await this.findById(id);
-    if (!category) return null;
-
-    await category.update(data);
-    return category;
+  update(id, data, options = {}) {
+    return Category.update(data, { where: { id }, ...options });
   }
 
-  async delete(id) {
-    const category = await this.findById(id);
-    if (!category) return null;
-
-    await category.destroy();
-    return category;
+  delete(id, options = {}) {
+    return Category.destroy({ where: { id }, ...options });
   }
 
-  async categoryExists(id) {
-    const category = await Category.findByPk(id);
-    return !!category;
+  async exists(id, options = {}) {
+    const count = await Category.count({ where: { id }, ...options });
+    return count > 0;
   }
 }
 

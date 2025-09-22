@@ -2,12 +2,12 @@ const Category = require('./category.model');
 const SubCategory = require('./subcategory.model');
 const Brand = require('./brand.model');
 const Product = require('./product.model');
+const ProductSubCategory = require('./productsubcategory.model'); // الجديد
 
-// 🔹 Category ↔ SubCategory
 Category.hasMany(SubCategory, {
   foreignKey: 'categoryId',
   as: 'subCategories',
-  onDelete: 'CASCADE', // لو الكاتيجوري اتمسح → السابكاتيجوريز تتشال
+  onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
 
@@ -18,11 +18,10 @@ SubCategory.belongsTo(Category, {
   onUpdate: 'CASCADE',
 });
 
-// 🔹 Category ↔ Product
 Category.hasMany(Product, {
   foreignKey: 'categoryId',
   as: 'products',
-  onDelete: 'RESTRICT', // ⛔ ميمنعش مسح كاتيجوري لو فيه منتجات مرتبطة بيه
+  onDelete: 'RESTRICT',
   onUpdate: 'CASCADE',
 });
 
@@ -33,22 +32,6 @@ Product.belongsTo(Category, {
   onUpdate: 'CASCADE',
 });
 
-// 🔹 SubCategory ↔ Product
-SubCategory.hasMany(Product, {
-  foreignKey: 'subcategoryId',
-  as: 'products',
-  onDelete: 'CASCADE',
-  onUpdate: 'CASCADE',
-});
-
-Product.belongsTo(SubCategory, {
-  foreignKey: 'subcategoryId',
-  as: 'subcategory',
-  onDelete: 'CASCADE',
-  onUpdate: 'CASCADE',
-});
-
-// 🔹 Brand ↔ Product
 Brand.hasMany(Product, {
   foreignKey: 'brandId',
   as: 'products',
@@ -63,4 +46,22 @@ Product.belongsTo(Brand, {
   onUpdate: 'CASCADE',
 });
 
-module.exports = { Category, SubCategory, Brand, Product };
+Product.belongsToMany(SubCategory, {
+  through: ProductSubCategory,
+  as: 'subCategories',
+  foreignKey: 'productId',
+  otherKey: 'subcategoryId',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+
+SubCategory.belongsToMany(Product, {
+  through: ProductSubCategory,
+  as: 'products',
+  foreignKey: 'subcategoryId',
+  otherKey: 'productId',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+
+module.exports = { Category, SubCategory, Brand, Product, ProductSubCategory };

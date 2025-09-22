@@ -1,13 +1,23 @@
-const { check } = require('express-validator');
+const { check, body, param } = require('express-validator');
 const validatorMiddleware = require('../middlewares/validatorMiddlleware');
+const { validateEntityExists } = require('../helpers/validationHelpers');
+const { Category } = require('../models/associations');
 
 exports.getCategoryValidator = [
   check('id').isUUID().withMessage('Invalid category id format'),
   validatorMiddleware,
 ];
 
+exports.validateCategoryIdParam = [
+  param('categoryId')
+    .isUUID()
+    .withMessage('Invalid Category id format')
+    .custom(validateEntityExists(Category, 'id')),
+  validatorMiddleware,
+];
+
 exports.createCategoryValidator = [
-  check('name')
+  body('name')
     .notEmpty()
     .withMessage('Category required')
     .isLength({ min: 3 })
@@ -20,7 +30,7 @@ exports.createCategoryValidator = [
 
 exports.updateCategoryValidator = [
   check('id').isUUID().withMessage('Invalid category id format'),
-  check('name')
+  body('name')
     .optional()
     .isLength({ min: 3 })
     .withMessage('Too short category name')
