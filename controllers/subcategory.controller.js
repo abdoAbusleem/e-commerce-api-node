@@ -1,12 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const subCategoryService = require('../services/subcategory.service');
 
-// Nested route
-exports.setCategoryIdToBody = (req, res, next) => {
-  if (!req.body.categoryId) req.body.categoryId = req.params.categoryId;
-  next();
-};
-
 // @des     Create SubCategory
 // @route   Post/  api/v1/subcategories
 // @access  Private

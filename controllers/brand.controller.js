@@ -5,6 +5,7 @@ const brandService = require('../services/brand.service');
 // @route   Post/  api/v1/Brands
 // @access  Private
 exports.createBrand = asyncHandler(async (req, res) => {
+  console.log(req.body);
   const brand = await brandService.createBrand(req.body);
   res.status(201).json({ status: 'success', data: brand });
 });
@@ -12,7 +13,7 @@ exports.createBrand = asyncHandler(async (req, res) => {
 // @route   Get/  api/v1/Brands
 // @access  Public
 exports.getBrands = asyncHandler(async (req, res) => {
-  const result = await brandService.getBrands(req.query);
+  const result = await brandService.getAllBrands(req.query);
 
   res.status(200).json({
     status: 'success',

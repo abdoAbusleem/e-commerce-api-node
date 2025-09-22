@@ -35,21 +35,23 @@ class SubCategoryService {
   }
 
   async updateSubCategory(id, data) {
-    const { name, categoryId } = data;
-    const subCategory = await subCategoryRepository.findById(id);
-    if (!subCategory) throw new ApiError(`No subcategory found for this id: ${id}`, 404);
-    await subCategoryRepository.update(subCategory, { name, categoryId });
-    return subCategory;
+    const subCategory = await subCategoryRepository.exists(id);
+    if (!subCategory) {
+      throw new ApiError(`No subcategory found for this id: ${id}`, 404);
+    }
+
+    await subCategoryRepository.update(id, data);
+    return subCategoryRepository.findById(id);
   }
 
   async deleteSubCategory(id) {
-    const subCategory = await subCategoryRepository.findById(id);
+    const subCategory = await subCategoryRepository.exists(id);
     if (!subCategory) {
-      throw new ApiError(`No subcategory for this id ${id}`, 404);
+      throw new ApiError(`No subcategory found for this id ${id}`, 404);
     }
 
     await subCategoryRepository.delete(id);
-    return subCategory;
+    return { message: 'Subcategory deleted successfully' };
   }
 }
 

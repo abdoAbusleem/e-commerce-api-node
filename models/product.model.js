@@ -1,6 +1,5 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');
-const { v4: uuidv4 } = require('uuid');
 const slugify = require('sequelize-slugify');
 
 class Product extends Model {}
@@ -10,7 +9,7 @@ Product.init(
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
-      defaultValue: uuidv4,
+      defaultValue: DataTypes.UUIDV4,
     },
     title: {
       type: DataTypes.STRING(100),
@@ -18,7 +17,7 @@ Product.init(
     },
     slug: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       unique: true,
     },
     description: {
@@ -61,14 +60,6 @@ Product.init(
         key: 'id',
       },
     },
-    subcategoryId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      references: {
-        model: 'subcategories',
-        key: 'id',
-      },
-    },
     brandId: {
       type: DataTypes.UUID,
       allowNull: true,
@@ -90,14 +81,14 @@ Product.init(
     sequelize,
     tableName: 'products',
     timestamps: true,
-    paranoid: true, // للـ soft delete
+    paranoid: true,
     indexes: [
       { fields: ['price'] },
       { fields: ['categoryId'] },
       { fields: ['brandId'] },
       { fields: ['ratingsAverage'] },
       { fields: ['createdAt'] },
-      { fields: ['slug'] }, // مهم للبحث بالـ slug
+      { fields: ['slug'] },
       {
         fields: ['title'],
         using: 'gin',

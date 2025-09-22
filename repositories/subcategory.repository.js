@@ -1,37 +1,38 @@
 const { SubCategory } = require('../models/associations');
 
 class SubCategoryRepository {
-  async create(data) {
-    const subCategory = await SubCategory.create(data); // عرفنا متغير
-    return subCategory; // رجعناه
+  create(data, options = {}) {
+    return SubCategory.create(data, options);
   }
 
-  async findAll(options = {}) {
-    const { page = 1, limit = 5, filter = {}, order = [['createdAt', 'DESC']] } = options;
+  findAll(options = {}) {
+    const { page = 1, limit = 5, where = {}, order = [['createdAt', 'DESC']] } = options;
     const offset = (page - 1) * limit;
 
-    const result = await SubCategory.findAndCountAll({
-      where: filter,
+    return SubCategory.findAndCountAll({
+      where,
       order,
       limit,
       offset,
+      ...options,
     });
-    return result;
   }
 
-  async findById(id) {
-    const subCategory = await SubCategory.findByPk(id);
-    return subCategory;
+  findById(id, options = {}) {
+    return SubCategory.findByPk(id, options);
   }
 
-  async update(subCategory, data) {
-    const updated = await subCategory.update(data);
-    return updated;
+  update(id, data, options = {}) {
+    return SubCategory.update(data, { where: { id }, ...options });
   }
 
-  async delete(subCategory) {
-    const deleted = await subCategory.destroy();
-    return deleted;
+  delete(id, options = {}) {
+    return SubCategory.destroy({ where: { id }, ...options });
+  }
+
+  async exists(id, options = {}) {
+    const count = await SubCategory.count({ where: { id }, ...options });
+    return count > 0;
   }
 }
 
