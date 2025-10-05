@@ -21,8 +21,9 @@ class BrandRepository {
     return Brand.findByPk(id, options);
   }
 
-  update(id, data, options = {}) {
-    return Brand.update(data, { where: { id }, ...options });
+  async update(id, data, options = {}) {
+    const [updatedRows] = await Brand.update(data, { where: { id }, ...options });
+    return updatedRows > 0;
   }
 
   delete(id, options = {}) {

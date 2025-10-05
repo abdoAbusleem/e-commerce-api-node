@@ -1,5 +1,5 @@
 const BrandRepository = require('../repositories/brand.repository');
-const ApiError = require('../utils/apiError');
+const { throwNotFound } = require('../utils/errors');
 
 class BrandService {
   async createBrand(data) {
@@ -26,29 +26,24 @@ class BrandService {
 
   async getBrandById(id) {
     const brand = await BrandRepository.findById(id);
-    if (!brand) throw new ApiError(`No brand found for this id ${id}`, 404);
+    if (!brand) throw throwNotFound('brand', id);
     return brand;
   }
 
   async updateBrand(id, data) {
-    const brand = await BrandRepository.exists(id);
-    if (!brand) throw new ApiError(`No brand found for this id: ${id}`, 404);
+    const exists = await BrandRepository.exists(id);
+    if (!exists) throw throwNotFound('brand', id);
 
     await BrandRepository.update(id, data);
     return BrandRepository.findById(id);
   }
 
   async deleteBrand(id) {
-    const brand = await BrandRepository.exists(id);
-    if (!brand) throw new ApiError(`No brand found for this id: ${id}`, 404);
+    const exists = await BrandRepository.exists(id);
+    if (!exists) throw throwNotFound('brand', id);
 
-    const deletedBrand = await BrandRepository.delete(id);
-    return deletedBrand;
-  }
-
-  async checkBrandExists(id) {
-    const exists = await BrandRepository.brandExists(id);
-    return exists;
+    await BrandRepository.delete(id);
+    return { message: 'Brand deleted successfully' };
   }
 }
 

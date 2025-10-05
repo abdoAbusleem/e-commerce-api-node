@@ -32,8 +32,14 @@ class ProductRepository {
     });
   }
 
-  update(id, data, options = {}) {
-    return Product.update(data, { where: { id }, ...options });
+  async updateWithRelations(id, data, subCategoryIds, options = {}) {
+    await Product.update(data, { where: { id }, ...options });
+
+    if (subCategoryIds !== undefined) {
+      await this.setSubCategories(id, subCategoryIds, options);
+    }
+
+    return this.findById(id, options);
   }
 
   forceDelete(id) {
@@ -44,14 +50,13 @@ class ProductRepository {
     return Product.destroy({ where: { id } });
   }
 
-  async productExists(id, options = {}) {
+  async exists(id, options = {}) {
     const count = await Product.count({ where: { id }, ...options });
     return count > 0;
   }
 
   addSubCategories(productId, subCategoryIds, options = {}) {
     const relationships = subCategoryIds.map(subcategoryId => ({ productId, subcategoryId }));
-    console.log('relationships', relationships);
     return ProductSubCategory.bulkCreate(relationships, { ignoreDuplicates: true, ...options });
   }
 

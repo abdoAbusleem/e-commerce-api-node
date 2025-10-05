@@ -22,8 +22,9 @@ class SubCategoryRepository {
     return SubCategory.findByPk(id, options);
   }
 
-  update(id, data, options = {}) {
-    return SubCategory.update(data, { where: { id }, ...options });
+  async update(id, data, options = {}) {
+    const [updatedRows] = await SubCategory.update(data, { where: { id }, ...options });
+    return updatedRows > 0;
   }
 
   delete(id, options = {}) {

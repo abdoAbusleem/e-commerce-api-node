@@ -23,7 +23,8 @@ class CategoryRepository {
   }
 
   update(id, data, options = {}) {
-    return Category.update(data, { where: { id }, ...options });
+    const [updatedRows] = Category.update(data, { where: { id }, ...options });
+    return updatedRows > 0;
   }
 
   delete(id, options = {}) {

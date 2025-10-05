@@ -83,3 +83,14 @@ exports.addSubCategoriesToProduct = asyncHandler(async (req, res) => {
     data: product,
   });
 });
+
+exports.replaceProductSubCategories = asyncHandler(async (req, res) => {
+  const product = await productService.replaceProductSubCategories(
+    req.params.id,
+    req.body.subCategoryIds
+  );
+  res.status(200).json({
+    status: 'success',
+    data: product,
+  });
+});
