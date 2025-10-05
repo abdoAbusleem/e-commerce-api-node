@@ -18,18 +18,34 @@ const globalError = (err, req, res, next) => {
   }
 };
 
-const sendErrorForDev = (err, res) =>
-  res.status(err.statusCode).json({
+const sendErrorForDev = (err, res) => {
+  const response = {
     status: err.status,
     error: err,
     message: err.message,
     stack: err.stack,
-  });
+  };
 
-const sendErrorForProd = (err, res) =>
-  res.status(err.statusCode).json({
+  // Add validation errors if present
+  if (err.errors) {
+    response.errors = err.errors;
+  }
+
+  res.status(err.statusCode).json(response);
+};
+
+const sendErrorForProd = (err, res) => {
+  const response = {
     status: err.status,
     message: err.message,
-  });
+  };
+
+  // Add validation errors if present
+  if (err.errors) {
+    response.errors = err.errors;
+  }
+
+  res.status(err.statusCode).json(response);
+};
 
 module.exports = globalError;

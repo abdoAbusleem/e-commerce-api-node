@@ -1,8 +1,10 @@
 const subCategoryRepository = require('../repositories/subcategory.repository');
-const ApiError = require('../utils/apiError');
+const { throwNotFound } = require('../utils/errors');
+const { validateCategoryExists } = require('../validators/subcategory/subcategory.dbValidation');
 
 class SubCategoryService {
   async createSubCategory(data) {
+    await validateCategoryExists(data.categoryId);
     const subCategory = await subCategoryRepository.create(data);
     return subCategory;
   }
@@ -28,27 +30,22 @@ class SubCategoryService {
 
   async getSubCategoryById(id) {
     const subCategory = await subCategoryRepository.findById(id);
-    if (!subCategory) {
-      throw new ApiError(`No subcategory found for this id ${id}`, 404);
-    }
+    if (!subCategory) throw throwNotFound('subcategory', id);
+
     return subCategory;
   }
 
   async updateSubCategory(id, data) {
-    const subCategory = await subCategoryRepository.exists(id);
-    if (!subCategory) {
-      throw new ApiError(`No subcategory found for this id: ${id}`, 404);
-    }
+    const exists = await subCategoryRepository.exists(id);
+    if (!exists) throw throwNotFound('subcategory', id);
 
     await subCategoryRepository.update(id, data);
     return subCategoryRepository.findById(id);
   }
 
   async deleteSubCategory(id) {
-    const subCategory = await subCategoryRepository.exists(id);
-    if (!subCategory) {
-      throw new ApiError(`No subcategory found for this id ${id}`, 404);
-    }
+    const exists = await subCategoryRepository.exists(id);
+    if (!exists) throw throwNotFound('subcategory', id);
 
     await subCategoryRepository.delete(id);
     return { message: 'Subcategory deleted successfully' };

@@ -5,7 +5,6 @@ const brandService = require('../services/brand.service');
 // @route   Post/  api/v1/Brands
 // @access  Private
 exports.createBrand = asyncHandler(async (req, res) => {
-  console.log(req.body);
   const brand = await brandService.createBrand(req.body);
   res.status(201).json({ status: 'success', data: brand });
 });

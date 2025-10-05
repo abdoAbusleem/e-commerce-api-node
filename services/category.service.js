@@ -1,6 +1,5 @@
 const categoryRepository = require('../repositories/category.repository');
-const ApiError = require('../utils/apiError');
-
+const { throwNotFound } = require('../utils/errors');
 class CategoryService {
   async createCategory(data) {
     const category = await categoryRepository.create(data);
@@ -26,22 +25,22 @@ class CategoryService {
 
   async getCategoryById(id) {
     const category = await categoryRepository.findById(id);
-    if (!category) throw new ApiError(`No category found for this id ${id}`, 404);
+    if (!category) throw throwNotFound('category', id);
 
     return category;
   }
 
   async updateCategory(id, data) {
-    const category = await categoryRepository.exists(id);
-    if (!category) throw new ApiError(`No category found for this id: ${id}`, 404);
+    const exists = await categoryRepository.exists(id);
+    if (!exists) throw throwNotFound('category', id);
 
     await categoryRepository.update(id, data);
     return categoryRepository.findById(id);
   }
 
   async deleteCategory(id) {
-    const category = await categoryRepository.exists(id);
-    if (!category) throw new ApiError(`No category found for this id ${id}`, 404);
+    const exists = await categoryRepository.exists(id);
+    if (!exists) throw throwNotFound('category', id);
 
     await categoryRepository.delete(id);
     return { message: 'Category deleted successfully' };

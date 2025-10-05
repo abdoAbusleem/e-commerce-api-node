@@ -1,14 +1,17 @@
 const productRepository = require('../repositories/product.repository');
-const ApiError = require('../utils/apiError');
 const sequelize = require('../config/database');
+const { validateProductData } = require('../validators/product/product.dbValidation');
+const { throwNotFound } = require('../utils/errors');
+const ApiError = require('../utils/apiError');
 
 class ProductService {
   async createProduct(data) {
+    const { subCategoryIds, ...productData } = data;
+
+    await validateProductData(productData, subCategoryIds);
+
     const transaction = await sequelize.transaction();
-
     try {
-      const { subCategoryIds, ...productData } = data;
-
       const product = await productRepository.create(productData, { transaction });
 
       if (subCategoryIds?.length > 0) {
@@ -16,53 +19,54 @@ class ProductService {
       }
 
       const result = await productRepository.findById(product.id, { transaction });
-
       await transaction.commit();
+
       return result;
     } catch (error) {
-      if (!transaction.finished) {
-        await transaction.rollback();
-      }
+      if (!transaction.finished) await transaction.rollback();
       throw error;
     }
   }
 
   async updateProduct(id, data) {
+    const { subCategoryIds, categoryId, ...productData } = data;
+
+    if (categoryId) {
+      throw new ApiError(
+        'Cannot change category in update, use replaceProductCategory endpoint',
+        400
+      );
+    }
+
+    const product = await productRepository.findById(id);
+    if (!product) throw throwNotFound('product', id);
+
+    await validateProductData({
+      ...productData,
+      categoryId: product.categoryId,
+      subCategoryIds,
+    });
+
     const transaction = await sequelize.transaction();
-
     try {
-      const { subCategoryIds, ...productData } = data;
-
-      const product = await productRepository.findById(id);
-      if (!product) {
-        throw new ApiError(`No product found for this id: ${id}`, 404);
-      }
-
-      if (Object.keys(productData).length > 0) {
-        await productRepository.update(id, productData, { transaction });
-      }
-
-      if (subCategoryIds !== undefined) {
-        await productRepository.setSubCategories(id, subCategoryIds, { transaction });
-      }
-
-      const result = await productRepository.findById(id, { transaction });
+      const updatedProduct = await productRepository.updateWithRelations(
+        id,
+        productData,
+        subCategoryIds,
+        { transaction }
+      );
 
       await transaction.commit();
-      return result;
+      return updatedProduct;
     } catch (error) {
-      if (!transaction.finished) {
-        await transaction.rollback();
-      }
+      if (!transaction.finished) await transaction.rollback();
       throw error;
     }
   }
 
   async getProductById(id) {
     const product = await productRepository.findById(id);
-    if (!product) {
-      throw new ApiError(`No product for this id ${id}`, 404);
-    }
+    if (!product) throw throwNotFound('product', id);
     return product;
   }
 
@@ -84,20 +88,16 @@ class ProductService {
   }
 
   async forceDeleteProduct(id) {
-    const product = await productRepository.productExists(id, { paranoid: false });
-    if (!product) {
-      throw new ApiError(`No product for this id ${id}`, 404);
-    }
+    const exists = await productRepository.exists(id, { paranoid: false });
+    if (!exists) throw throwNotFound('product', id);
 
     await productRepository.forceDelete(id);
-    return { message: 'Product deleted successfully' };
+    return { message: 'Product permanently deleted successfully' };
   }
 
   async softDeleteProduct(id) {
-    const product = await productRepository.productExists(id);
-    if (!product) {
-      throw new ApiError(`No product for this id ${id}`, 404);
-    }
+    const exists = await productRepository.exists(id);
+    if (!exists) throw throwNotFound('product', id);
 
     await productRepository.softDelete(id);
     return { message: 'Product deleted successfully' };
@@ -105,22 +105,36 @@ class ProductService {
 
   async addSubCategoriesToProduct(id, subCategoryIds) {
     const product = await productRepository.findById(id);
-    if (!product) {
-      throw new ApiError(`No product for this id ${id}`, 404);
-    }
+    if (!product) throw throwNotFound('product', id);
 
-    await productRepository.addSubCategories(id, subCategoryIds);
+    const existingSubIds = product.subCategories.map(sub => sub.id);
+    const newSubIds = subCategoryIds.filter(subId => !existingSubIds.includes(subId));
+
+    if (newSubIds.length === 0) return product;
+
+    await validateProductData({ categoryId: product.categoryId }, newSubIds);
+    await productRepository.addSubCategories(id, newSubIds);
+
     return this.getProductById(id);
   }
 
-  async replaceProductSubCategories(id, subCategoryIds) {
-    const product = await productRepository.findById(id);
-    if (!product) {
-      throw new ApiError(`No product for this id ${id}`, 404);
-    }
+  async replaceProductSubCategories(id, subCategoryIds, categoryId) {
+    const exists = await productRepository.exists(id);
+    if (!exists) throw throwNotFound('product', id);
 
-    await productRepository.setSubCategories(id, subCategoryIds);
-    return this.getProductById(id);
+    await validateProductData({ categoryId }, subCategoryIds);
+
+    const transaction = await sequelize.transaction();
+    try {
+      await productRepository.updateWithRelations(id, { categoryId }, { transaction });
+      await productRepository.setSubCategories(id, subCategoryIds, { transaction });
+
+      await transaction.commit();
+      return this.getProductById(id);
+    } catch (error) {
+      if (!transaction.finished) await transaction.rollback();
+      throw error;
+    }
   }
 }
 
