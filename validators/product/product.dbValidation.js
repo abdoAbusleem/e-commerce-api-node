@@ -3,14 +3,16 @@ const CategoryRepository = require('../../repositories/category.repository');
 const BrandRepository = require('../../repositories/brand.repository');
 const { validateSubCategoriesInCategory } = require('../subcategory/subcategory.dbValidation');
 
-async function validateProductData(productData, subCategoryIds) {
-  const [category, brand] = await Promise.all([
-    checkExists(CategoryRepository, productData.categoryId, 'Category'),
+async function validateProductData(productData, subCategoryIds, categoryId) {
+  const targetCategoryId = categoryId || productData.categoryId;
+
+  const [category, brand, subCategories] = await Promise.all([
+    checkExists(CategoryRepository, targetCategoryId, 'Category'),
     checkExists(BrandRepository, productData.brandId, 'Brand'),
-    validateSubCategoriesInCategory(subCategoryIds, productData.categoryId),
+    validateSubCategoriesInCategory(subCategoryIds, targetCategoryId),
   ]);
 
-  return { category, brand };
+  return { category, brand, subCategories };
 }
 
 module.exports = {

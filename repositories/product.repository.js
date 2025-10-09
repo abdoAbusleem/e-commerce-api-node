@@ -1,30 +1,22 @@
 const { Product, SubCategory, Category, ProductSubCategory } = require('../models/associations');
+const { Op } = require('sequelize');
+const BaseRepository = require('./base.repository');
 
-class ProductRepository {
-  create(data, options = {}) {
-    return Product.create(data, options);
+class ProductRepository extends BaseRepository {
+  constructor() {
+    super(Product);
   }
 
   findAll(options = {}) {
-    const { page = 1, limit = 5, order = [['createdAt', 'DESC']], where = {} } = options;
-    const offset = (page - 1) * limit;
+    const { includeDeleted = false, onlyDeleted = false } = options;
 
-    return Product.findAndCountAll({
-      where,
-      order,
-      limit,
-      offset,
-      ...options,
-      include: [
-        { model: SubCategory, as: 'subCategories', through: { attributes: [] } },
-        { model: Category, as: 'category' },
-      ],
-    });
-  }
+    const finalWhere = { ...(options.where || {}) };
+    if (onlyDeleted) finalWhere.deletedAt = { [Op.ne]: null };
 
-  findById(id, options = {}) {
-    return Product.findByPk(id, {
+    return super.findAll({
       ...options,
+      where: finalWhere,
+      paranoid: !(includeDeleted || onlyDeleted),
       include: [
         { model: SubCategory, as: 'subCategories', through: { attributes: [] } },
         { model: Category, as: 'category' },
@@ -33,26 +25,23 @@ class ProductRepository {
   }
 
   async updateWithRelations(id, data, subCategoryIds, options = {}) {
-    await Product.update(data, { where: { id }, ...options });
-
+    await this.Model.update(data, { where: { id }, ...options });
     if (subCategoryIds !== undefined) {
       await this.setSubCategories(id, subCategoryIds, options);
     }
-
     return this.findById(id, options);
   }
 
   forceDelete(id) {
-    return Product.destroy({ where: { id }, force: true, paranoid: false });
+    return this.Model.destroy({ where: { id }, force: true, paranoid: false });
   }
 
   softDelete(id) {
-    return Product.destroy({ where: { id } });
+    return this.Model.destroy({ where: { id } });
   }
 
-  async exists(id, options = {}) {
-    const count = await Product.count({ where: { id }, ...options });
-    return count > 0;
+  restore(id) {
+    return this.Model.restore({ where: { id } });
   }
 
   addSubCategories(productId, subCategoryIds, options = {}) {
@@ -71,4 +60,5 @@ class ProductRepository {
     }
   }
 }
+
 module.exports = new ProductRepository();

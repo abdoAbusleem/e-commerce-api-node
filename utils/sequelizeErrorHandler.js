@@ -1,3 +1,4 @@
+const HttpStatus = require('../common/httpStatus');
 const {
   ValidationError,
   UniqueConstraintError,
@@ -8,28 +9,28 @@ const {
 function handleSequelizeError(err) {
   if (err instanceof ValidationError) {
     return {
-      statusCode: 400,
+      statusCode: HttpStatus.BAD_REQUEST,
       message: err.errors.map(e => e.message).join(', '),
     };
   }
 
   if (err instanceof UniqueConstraintError) {
     return {
-      statusCode: 400,
+      statusCode: HttpStatus.BAD_REQUEST,
       message: `This value must be unique. Duplicate value: ${err.errors[0]?.value}.`,
     };
   }
 
   if (err instanceof ForeignKeyConstraintError) {
     return {
-      statusCode: 400,
+      statusCode: HttpStatus.BAD_REQUEST,
       message: `Invalid reference id: related ${err.table} record does not exist.`,
     };
   }
 
   if (err instanceof DatabaseError) {
     return {
-      statusCode: 400,
+      statusCode: HttpStatus.BAD_REQUEST,
       message: 'Database error occurred. Please try again later.',
     };
   }

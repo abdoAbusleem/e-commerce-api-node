@@ -1,6 +1,9 @@
 // controllers/category.controller.js
 const asyncHandler = require('express-async-handler');
 const categoryService = require('../services/category.service');
+const { successResponse } = require('../utils/responseFormatter');
+const { successMessage } = require('../common/messages');
+const HttpStatus = require('../common/httpStatus');
 
 // @desc    Create Category
 // @route   POST /api/v1/categories
@@ -8,9 +11,10 @@ const categoryService = require('../services/category.service');
 exports.createCategory = asyncHandler(async (req, res) => {
   const category = await categoryService.createCategory(req.body);
 
-  res.status(201).json({
-    status: 'success',
+  return successResponse(res, {
     data: category,
+    message: successMessage('Category', 'create'),
+    statusCode: HttpStatus.CREATED,
   });
 });
 
@@ -20,13 +24,11 @@ exports.createCategory = asyncHandler(async (req, res) => {
 exports.getCategories = asyncHandler(async (req, res) => {
   const result = await categoryService.getAllCategories(req.query);
 
-  res.status(200).json({
-    status: 'success',
-    total: result.pagination.total,
-    perPage: result.pagination.perPage,
-    currentCount: result.pagination.currentCount,
-    currentPage: result.pagination.currentPage,
-    data: result.categories,
+  return successResponse(res, {
+    data: result.rows,
+    message: successMessage('Category', 'list'),
+    meta: result.meta,
+    statusCode: HttpStatus.OK,
   });
 });
 
@@ -36,9 +38,10 @@ exports.getCategories = asyncHandler(async (req, res) => {
 exports.getCategoryById = asyncHandler(async (req, res) => {
   const category = await categoryService.getCategoryById(req.params.id);
 
-  res.status(200).json({
-    status: 'success',
+  return successResponse(res, {
     data: category,
+    message: successMessage('Category', 'fetch'),
+    statusCode: HttpStatus.OK,
   });
 });
 
@@ -48,9 +51,10 @@ exports.getCategoryById = asyncHandler(async (req, res) => {
 exports.updateCategory = asyncHandler(async (req, res) => {
   const category = await categoryService.updateCategory(req.params.id, req.body);
 
-  res.status(200).json({
-    status: 'success',
+  return successResponse(res, {
     data: category,
+    message: successMessage('Category', 'update'),
+    statusCode: HttpStatus.OK,
   });
 });
 
@@ -60,5 +64,5 @@ exports.updateCategory = asyncHandler(async (req, res) => {
 exports.deleteCategory = asyncHandler(async (req, res) => {
   await categoryService.deleteCategory(req.params.id);
 
-  res.status(204).send();
+  return res.status(HttpStatus.NO_CONTENT).send();
 });
