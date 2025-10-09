@@ -25,6 +25,10 @@ const updateProductSchema = createProductSchema
     categoryId: Joi.forbidden(),
   });
 
+const addSubCategoriesSchema = Joi.object({
+  subCategoryIds: Joi.array().items(Joi.string().uuid()).min(1).required(),
+});
+
 const idParamSchema = Joi.object({
   id: Joi.string().uuid().required(),
 });
@@ -33,4 +37,5 @@ module.exports = {
   createProductSchema,
   updateProductSchema,
   idParamSchema,
+  addSubCategoriesSchema,
 };

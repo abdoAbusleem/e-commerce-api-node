@@ -11,39 +11,35 @@ class BrandService {
     const page = Math.max(1, parseInt(queryParams.page) || 1);
     const limit = Math.max(1, Math.min(100, parseInt(queryParams.limit) || 5));
 
-    const result = await BrandRepository.findAll({ page, limit });
-
+    const { rows, meta } = await BrandRepository.findAll({
+      page,
+      limit,
+    });
     return {
-      brands: result.rows,
-      pagination: {
-        total: result.count,
-        perPage: limit,
-        currentCount: result.rows.length,
-        currentPage: page,
-      },
+      rows,
+      meta,
     };
   }
 
   async getBrandById(id) {
     const brand = await BrandRepository.findById(id);
-    if (!brand) throw throwNotFound('brand', id);
+    if (!brand) throwNotFound('brand', id);
     return brand;
   }
 
   async updateBrand(id, data) {
     const exists = await BrandRepository.exists(id);
-    if (!exists) throw throwNotFound('brand', id);
+    if (!exists) throwNotFound('brand', id);
 
-    await BrandRepository.update(id, data);
-    return BrandRepository.findById(id);
+    const brand = await BrandRepository.update(id, data);
+    return brand;
   }
 
   async deleteBrand(id) {
     const exists = await BrandRepository.exists(id);
-    if (!exists) throw throwNotFound('brand', id);
+    if (!exists) throwNotFound('brand', id);
 
     await BrandRepository.delete(id);
-    return { message: 'Brand deleted successfully' };
   }
 }
 

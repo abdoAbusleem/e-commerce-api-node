@@ -4,15 +4,15 @@ const {
   getProductById,
   createProduct,
   updateProduct,
-  forceDeleteProduct,
-  softDeleteProduct,
+  deleteProduct,
   addSubCategoriesToProduct,
-  replaceProductSubCategories,
+  restoreProduct,
 } = require('../controllers/product.controller');
 const {
   createProductSchema,
   updateProductSchema,
   idParamSchema,
+  addSubCategoriesSchema,
 } = require('../validators/product/product.schema');
 const validate = require('../middlewares/validatorMiddlleware');
 
@@ -22,15 +22,20 @@ router
   .route('/')
   .get(getProducts)
   .post(validate({ body: createProductSchema }), createProduct);
+
 router
   .route('/:id')
   .get(validate({ params: idParamSchema }), getProductById)
   .patch(validate({ body: updateProductSchema, params: idParamSchema }), updateProduct)
-  .delete(validate({ params: idParamSchema }), softDeleteProduct);
+  .delete(validate({ params: idParamSchema }), deleteProduct);
+
 router
   .route('/:id/subcategories')
-  .post(validate({ params: idParamSchema }), addSubCategoriesToProduct)
-  .put(validate({ params: idParamSchema }), replaceProductSubCategories);
-router.delete('/:id/force', validate({ params: idParamSchema }), forceDeleteProduct);
+  .post(
+    validate({ params: idParamSchema, body: addSubCategoriesSchema }),
+    addSubCategoriesToProduct
+  );
+
+router.post('/:id/restore', validate({ params: idParamSchema }), restoreProduct);
 
 module.exports = router;

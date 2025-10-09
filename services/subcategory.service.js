@@ -1,11 +1,11 @@
-const subCategoryRepository = require('../repositories/subcategory.repository');
+const SubCategoryRepository = require('../repositories/subcategory.repository');
 const { throwNotFound } = require('../utils/errors');
 const { validateCategoryExists } = require('../validators/subcategory/subcategory.dbValidation');
 
 class SubCategoryService {
   async createSubCategory(data) {
     await validateCategoryExists(data.categoryId);
-    const subCategory = await subCategoryRepository.create(data);
+    const subCategory = await SubCategoryRepository.create(data);
     return subCategory;
   }
 
@@ -14,41 +14,37 @@ class SubCategoryService {
     const limit = Math.max(1, Math.min(100, parseInt(queryParams.limit) || 5));
 
     const where = categoryId ? { categoryId } : {};
-
-    const result = await subCategoryRepository.findAll({ page, limit, where });
-
+    const { rows, meta } = await SubCategoryRepository.findAll({
+      page,
+      limit,
+      where,
+    });
     return {
-      subCategories: result.rows,
-      pagination: {
-        total: result.count,
-        perPage: limit,
-        currentCount: result.rows.length,
-        currentPage: page,
-      },
+      rows,
+      meta,
     };
   }
 
   async getSubCategoryById(id) {
-    const subCategory = await subCategoryRepository.findById(id);
-    if (!subCategory) throw throwNotFound('subcategory', id);
-
+    const subCategory = await SubCategoryRepository.findById(id);
+    if (!subCategory) throwNotFound('subcategory', id);
     return subCategory;
   }
 
   async updateSubCategory(id, data) {
-    const exists = await subCategoryRepository.exists(id);
-    if (!exists) throw throwNotFound('subcategory', id);
+    const exists = await SubCategoryRepository.exists(id);
+    if (!exists) throwNotFound('subcategory', id);
 
-    await subCategoryRepository.update(id, data);
-    return subCategoryRepository.findById(id);
+    await validateCategoryExists(data.categoryId);
+    const subCategory = await SubCategoryRepository.update(id, data);
+    return subCategory;
   }
 
   async deleteSubCategory(id) {
-    const exists = await subCategoryRepository.exists(id);
-    if (!exists) throw throwNotFound('subcategory', id);
+    const exists = await SubCategoryRepository.exists(id);
+    if (!exists) throwNotFound('subcategory', id);
 
-    await subCategoryRepository.delete(id);
-    return { message: 'Subcategory deleted successfully' };
+    await SubCategoryRepository.delete(id);
   }
 }
 

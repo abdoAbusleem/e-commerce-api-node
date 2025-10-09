@@ -1,19 +1,16 @@
 const ApiError = require('./apiError');
+const HttpStatus = require('../common/httpStatus');
 
 function throwNotFound(entity, id) {
-  return new ApiError(`${entity} not found for id: ${id}`, 404);
+  throw new ApiError(`${entity} not found for id: ${id}`, HttpStatus.NOT_FOUND);
 }
 
 function throwBadRequest(message = 'Bad request') {
-  return new ApiError(message, 400);
+  throw new ApiError(message, HttpStatus.BAD_REQUEST);
 }
 
 function throwUnauthorized(message = 'Unauthorized') {
-  return new ApiError(message, 401);
+  throw new ApiError(message, HttpStatus.UNAUTHORIZED);
 }
 
-module.exports = {
-  throwNotFound,
-  throwBadRequest,
-  throwUnauthorized,
-};
+module.exports = { throwNotFound, throwBadRequest, throwUnauthorized };

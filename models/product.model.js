@@ -18,7 +18,6 @@ Product.init(
     slug: {
       type: DataTypes.STRING,
       allowNull: true,
-      unique: true,
     },
     description: {
       type: DataTypes.TEXT,

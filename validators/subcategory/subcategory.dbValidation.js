@@ -4,18 +4,22 @@ const { checkExists } = require('../../helpers/dbValidation.helper');
 const CategoryRepository = require('../../repositories/category.repository');
 
 async function validateSubCategoriesInCategory(subCategoryIds, categoryId) {
-  if (!subCategoryIds?.length) return;
-  const validSubCategories = await SubCategoryRepository.findAll({
+  if (!subCategoryIds?.length) return [];
+
+  const { rows } = await SubCategoryRepository.findAll({
     where: { id: subCategoryIds, categoryId },
   });
-  if (validSubCategories.length !== subCategoryIds.length) {
+
+  if (rows.length !== subCategoryIds.length) {
+    // ✅ استخدم rows.length
     throw new ApiError('Some subcategories do not belong to the provided category', 400);
   }
-  return validSubCategories;
+
+  return rows;
 }
 
 async function validateCategoryExists(categoryId) {
-  await checkExists(CategoryRepository, categoryId);
+  await checkExists(CategoryRepository, categoryId, 'category');
 }
 
 module.exports = {

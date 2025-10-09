@@ -1,18 +1,18 @@
 const Joi = require('joi');
 
-// ===== SubCategory =====
-const createSubCategorySchema = Joi.object({
+// ===== Brand =====
+const createBrandSchema = Joi.object({
   name: Joi.string().min(2).max(32).required(),
 });
 
-const updateSubCategorySchema = createSubCategorySchema.fork(['name'], schema => schema.optional());
+const brandUpdateSchema = createBrandSchema.fork(['name'], schema => schema.optional());
 
 const idParamSchema = Joi.object({
   id: Joi.string().uuid().required(),
 });
 
 module.exports = {
-  createSubCategorySchema,
-  updateSubCategorySchema,
+  createBrandSchema,
+  brandUpdateSchema,
   idParamSchema,
 };

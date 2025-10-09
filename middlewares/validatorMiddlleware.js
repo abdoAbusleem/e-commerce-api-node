@@ -1,3 +1,5 @@
+const HttpStatus = require('../common/httpStatus');
+
 const validate = schemas => {
   return (req, res, next) => {
     try {
@@ -9,7 +11,7 @@ const validate = schemas => {
           stripUnknown: false,
         });
         if (error) {
-          return res.status(400).json({
+          return res.status(HttpStatus.BAD_REQUEST).json({
             success: false,
             message: 'Validation error',
             errors: error.details.map(err => ({
@@ -28,7 +30,7 @@ const validate = schemas => {
           stripUnknown: true,
         });
         if (error) {
-          return res.status(400).json({
+          return res.status(HttpStatus.BAD_REQUEST).json({
             success: false,
             message: 'Validation error',
             errors: error.details.map(err => ({

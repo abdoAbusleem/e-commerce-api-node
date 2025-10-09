@@ -1,7 +1,8 @@
 const handleSequelizeError = require('../utils/sequelizeErrorHandler');
+const HttpStatus = require('../common/httpStatus');
 
 const globalError = (err, req, res, next) => {
-  err.statusCode = err.statusCode || 500;
+  err.statusCode = err.statusCode || HttpStatus.INTERNAL_SERVER_ERROR;
   err.status = err.status || 'error';
 
   // handle sequelize error
@@ -19,33 +20,18 @@ const globalError = (err, req, res, next) => {
 };
 
 const sendErrorForDev = (err, res) => {
-  const response = {
+  return res.status(err.statusCode).json({
     status: err.status,
     error: err,
     message: err.message,
     stack: err.stack,
-  };
-
-  // Add validation errors if present
-  if (err.errors) {
-    response.errors = err.errors;
-  }
-
-  res.status(err.statusCode).json(response);
+  });
 };
 
 const sendErrorForProd = (err, res) => {
-  const response = {
+  return res.status(err.statusCode).json({
     status: err.status,
     message: err.message,
-  };
-
-  // Add validation errors if present
-  if (err.errors) {
-    response.errors = err.errors;
-  }
-
-  res.status(err.statusCode).json(response);
+  });
 };
-
 module.exports = globalError;

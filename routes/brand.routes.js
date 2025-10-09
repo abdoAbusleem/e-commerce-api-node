@@ -8,7 +8,7 @@ const {
 } = require('../controllers/brand.controller');
 const {
   createBrandSchema,
-  updateBrandSchema,
+  brandUpdateSchema,
   idParamSchema,
 } = require('../validators/brand/brand.schema');
 const validate = require('../middlewares/validatorMiddlleware');
@@ -23,7 +23,7 @@ router
 router
   .route('/:id')
   .get(validate({ params: idParamSchema }), getBrandById)
-  .patch(validate({ body: updateBrandSchema, params: idParamSchema }), updateBrand)
+  .patch(validate({ body: brandUpdateSchema, params: idParamSchema }), updateBrand)
   .delete(validate({ params: idParamSchema }), deleteBrand);
 
 module.exports = router;

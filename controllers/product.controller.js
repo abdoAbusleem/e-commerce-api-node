@@ -1,6 +1,9 @@
 // controllers/category.controller.js
 const asyncHandler = require('express-async-handler');
 const productService = require('../services/product.service');
+const { successResponse } = require('../utils/responseFormatter');
+const { successMessage } = require('../common/messages');
+const HttpStatus = require('../common/httpStatus');
 
 // @desc    Create Product
 // @route   POST /api/v1/products
@@ -8,9 +11,10 @@ const productService = require('../services/product.service');
 exports.createProduct = asyncHandler(async (req, res) => {
   const product = await productService.createProduct(req.body);
 
-  res.status(201).json({
-    status: 'success',
+  return successResponse(res, {
     data: product,
+    message: successMessage('Product', 'create'),
+    statusCode: HttpStatus.CREATED,
   });
 });
 
@@ -18,15 +22,22 @@ exports.createProduct = asyncHandler(async (req, res) => {
 // @route   GET /api/v1/products
 // @access  Public
 exports.getProducts = asyncHandler(async (req, res) => {
+  // const isAdmin = req.user?.role === 'admin';
+
+  // const query = { ...req.query };
+
+  // if (!isAdmin) {
+  //   delete query.includeDeleted;
+  //   delete query.onlyDeleted;
+  // }
+
   const result = await productService.getAllProducts(req.query);
 
-  res.status(200).json({
-    status: 'success',
-    total: result.pagination.total,
-    perPage: result.pagination.perPage,
-    currentCount: result.pagination.currentCount,
-    currentPage: result.pagination.currentPage,
-    data: result.products,
+  return successResponse(res, {
+    data: result.rows,
+    message: successMessage('Product', 'list'),
+    meta: result.meta,
+    statusCode: HttpStatus.OK,
   });
 });
 
@@ -36,9 +47,10 @@ exports.getProducts = asyncHandler(async (req, res) => {
 exports.getProductById = asyncHandler(async (req, res) => {
   const product = await productService.getProductById(req.params.id);
 
-  res.status(200).json({
-    status: 'success',
+  return successResponse(res, {
     data: product,
+    message: successMessage('Product', 'fetch'),
+    statusCode: HttpStatus.OK,
   });
 });
 
@@ -48,49 +60,54 @@ exports.getProductById = asyncHandler(async (req, res) => {
 exports.updateProduct = asyncHandler(async (req, res) => {
   const product = await productService.updateProduct(req.params.id, req.body);
 
-  res.status(200).json({
-    status: 'success',
+  return successResponse(res, {
     data: product,
+    message: successMessage('Product', 'update'),
+    statusCode: HttpStatus.OK,
   });
 });
 
-// @desc    Delete specific Product
-// @route   DELETE /api/v1/products/:id/force
+// @desc    Delete specific Product (soft or force based on query param)
+// @route   DELETE /api/v1/products/:id?force=true
 // @access  Private
-exports.forceDeleteProduct = asyncHandler(async (req, res) => {
-  await productService.forceDeleteProduct(req.params.id);
+exports.deleteProduct = asyncHandler(async (req, res) => {
+  await productService.deleteProduct(req.params.id, req.query);
 
-  res.status(204).send();
+  if (req.query.force === 'true') {
+    return res.status(HttpStatus.NO_CONTENT).send();
+  }
+
+  return successResponse(res, {
+    message: successMessage('Product', 'delete'),
+    statusCode: HttpStatus.OK,
+  });
 });
 
-// @desc    Delete specific Product
-// @route   DELETE /api/v1/products/:id
+// @desc    Add subcategories to a product
+// @route   POST /api/v1/products/:id/subcategories
 // @access  Private
-exports.softDeleteProduct = asyncHandler(async (req, res) => {
-  await productService.softDeleteProduct(req.params.id);
-
-  res.status(204).send();
-});
-
 exports.addSubCategoriesToProduct = asyncHandler(async (req, res) => {
   const product = await productService.addSubCategoriesToProduct(
     req.params.id,
     req.body.subCategoryIds
   );
 
-  res.status(200).json({
-    status: 'success',
+  return successResponse(res, {
     data: product,
+    message: successMessage('Product', 'subcategories'),
+    statusCode: HttpStatus.OK,
   });
 });
 
-exports.replaceProductSubCategories = asyncHandler(async (req, res) => {
-  const product = await productService.replaceProductSubCategories(
-    req.params.id,
-    req.body.subCategoryIds
-  );
-  res.status(200).json({
-    status: 'success',
+// @desc    Restore specific Product
+// @route   POST /api/v1/products/:id/restore
+// @access  Private
+exports.restoreProduct = asyncHandler(async (req, res) => {
+  const product = await productService.restoreProduct(req.params.id);
+
+  return successResponse(res, {
     data: product,
+    message: successMessage('Product', 'restore'),
+    statusCode: HttpStatus.OK,
   });
 });
