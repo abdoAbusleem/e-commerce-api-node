@@ -44,24 +44,24 @@ class BaseRepository {
     return this.Model.findByPk(id, options);
   }
 
-  findByIds(ids = [], options = {}) {
+  async findByIds(ids = [], options = {}) {
     if (!Array.isArray(ids) || ids.length === 0) return [];
-    return this.Model.findAll({ where: { id: ids }, ...options });
+    const foundIds = await this.Model.findAll({ where: { id: ids }, ...options });
+    return foundIds;
   }
 
   async update(id, data, options = {}) {
-    const [affectedCount, affectedRows] = await this.Model.update(data, {
+    await this.Model.update(data, {
       where: { id },
-      returning: true,
       ...options,
+      individualHooks: true,
+      hooks: true,
     });
-    return affectedCount ? affectedRows[0] : null;
+
+    return this.findById(id);
   }
 
   delete(id, options = {}) {
-    return this.Model.destroy({ where: { id }, ...options });
-  }
-  softDelete(id, options = {}) {
     return this.Model.destroy({ where: { id }, ...options });
   }
 

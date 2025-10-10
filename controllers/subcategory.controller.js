@@ -1,8 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const subCategoryService = require('../services/subcategory.service');
 const { successResponse } = require('../utils/responseFormatter');
-const { successMessage } = require('../common/messages');
-const HttpStatus = require('../common/httpStatus');
+const { successMessage } = require('../constants/messages');
+const HttpStatus = require('../constants/httpStatus');
 
 // @des     Create SubCategory
 // @route   Post/  api/v1/subcategories

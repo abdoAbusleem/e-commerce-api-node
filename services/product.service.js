@@ -3,7 +3,8 @@ const { validateProductData } = require('../validators/product/product.dbValidat
 const { throwNotFound } = require('../utils/errors');
 const ApiError = require('../utils/apiError');
 const withTransaction = require('../helpers/transactionHelper');
-const { SubCategory, Category } = require('../models/associations');
+const { productIncludes } = require('../constants/queryIncludes');
+const HttpStatus = require('../constants/httpStatus');
 
 class ProductService {
   async createProduct(data) {
@@ -20,10 +21,7 @@ class ProductService {
 
       return productRepository.findById(product.id, {
         transaction,
-        include: [
-          { model: SubCategory, as: 'subCategories', through: { attributes: [] } },
-          { model: Category, as: 'category' },
-        ],
+        include: productIncludes.withSubCategories,
       });
     });
   }
@@ -34,7 +32,7 @@ class ProductService {
     if (categoryId) {
       throw new ApiError(
         'Cannot change category in update, use replaceProductCategory endpoint',
-        400
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -44,25 +42,17 @@ class ProductService {
 
       await validateProductData(productData, subCategoryIds, product.categoryId);
 
-      const updateProduct = await productRepository.updateWithRelations(
-        id,
-        productData,
-        subCategoryIds,
-        {
-          transaction,
-          include: [
-            { model: SubCategory, as: 'subCategories', through: { attributes: [] } },
-            { model: Category, as: 'category' },
-          ],
-        }
-      );
-
-      return updateProduct;
+      return productRepository.updateWithRelations(id, productData, subCategoryIds, {
+        transaction,
+        include: productIncludes.withSubCategories,
+      });
     });
   }
 
   async getProductById(id) {
-    const product = await productRepository.findById(id);
+    const product = await productRepository.findById(id, {
+      include: productIncludes.withSubCategories,
+    });
     if (!product) throwNotFound('product', id);
     return product;
   }
@@ -79,6 +69,7 @@ class ProductService {
       limit,
       includeDeleted,
       onlyDeleted,
+      include: productIncludes.withSubCategories,
     });
     return {
       rows,
@@ -95,7 +86,7 @@ class ProductService {
     if (force) {
       await productRepository.forceDelete(id);
     } else {
-      await productRepository.softDelete(id);
+      await productRepository.delete(id);
     }
   }
 
@@ -107,28 +98,24 @@ class ProductService {
     await productRepository.addSubCategories(id, subCategoryIds);
 
     return productRepository.findById(id, {
-      include: [
-        { model: SubCategory, as: 'subCategories', through: { attributes: [] } },
-        { model: Category, as: 'category' },
-      ],
+      include: productIncludes.withSubCategories,
     });
   }
 
   async restoreProduct(id) {
-    const product = await productRepository.findById(id, { paranoid: false });
+    const product = await productRepository.findById(id, {
+      paranoid: false,
+      include: productIncludes.withSubCategories,
+    });
+
     if (!product) throwNotFound('product', id);
 
     if (!product.deletedAt) {
-      throw new ApiError('Product is not deleted', 400);
+      throw new ApiError('Product is not deleted', HttpStatus.BAD_REQUEST);
     }
 
-    await productRepository.restore(id);
-    return productRepository.findById(id, {
-      include: [
-        { model: SubCategory, as: 'subCategories', through: { attributes: [] } },
-        { model: Category, as: 'category' },
-      ],
-    });
+    await product.restore();
+    return product;
   }
 }
 

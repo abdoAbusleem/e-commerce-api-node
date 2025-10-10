@@ -1,4 +1,4 @@
-const HttpStatus = require('../common/httpStatus');
+const HttpStatus = require('../constants/httpStatus');
 
 function successResponse(
   res,

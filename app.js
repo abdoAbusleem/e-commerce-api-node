@@ -4,7 +4,7 @@ const cors = require('cors');
 
 const ApiError = require('./utils/apiError');
 const globalError = require('./middlewares/errorMiddleware');
-const HttpStatus = require('./common/httpStatus');
+const HttpStatus = require('./constants/httpStatus');
 
 // Routes
 const categoryRoute = require('./routes/category.routes');

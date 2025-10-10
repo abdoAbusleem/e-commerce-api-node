@@ -1,6 +1,6 @@
 const ApiError = require('../utils/apiError');
 const { throwNotFound } = require('../utils/errors');
-const HttpStatus = require('../common/httpStatus');
+const HttpStatus = require('../constants/httpStatus');
 
 async function checkExists(repository, id, entityName) {
   if (!id) return null;

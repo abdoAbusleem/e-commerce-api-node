@@ -1,6 +1,8 @@
-const { Product, SubCategory, Category, ProductSubCategory } = require('../models/associations');
+const { Product, ProductSubCategory } = require('../models/associations');
 const { Op } = require('sequelize');
 const BaseRepository = require('./base.repository');
+const HttpStatus = require('../constants/httpStatus');
+const ApiError = require('../utils/apiError');
 
 class ProductRepository extends BaseRepository {
   constructor() {
@@ -10,6 +12,12 @@ class ProductRepository extends BaseRepository {
   findAll(options = {}) {
     const { includeDeleted = false, onlyDeleted = false } = options;
 
+    if (includeDeleted && onlyDeleted)
+      throw new ApiError(
+        'Cannot use includeDeleted and onlyDeleted together',
+        HttpStatus.BAD_REQUEST
+      );
+
     const finalWhere = { ...(options.where || {}) };
     if (onlyDeleted) finalWhere.deletedAt = { [Op.ne]: null };
 
@@ -17,18 +25,23 @@ class ProductRepository extends BaseRepository {
       ...options,
       where: finalWhere,
       paranoid: !(includeDeleted || onlyDeleted),
-      include: [
-        { model: SubCategory, as: 'subCategories', through: { attributes: [] } },
-        { model: Category, as: 'category' },
-      ],
     });
   }
 
   async updateWithRelations(id, data, subCategoryIds, options = {}) {
-    await this.Model.update(data, { where: { id }, ...options });
+    const { transaction } = options;
+
+    await this.Model.update(data, {
+      where: { id },
+      transaction,
+      individualHooks: true,
+      hooks: true,
+    });
+
     if (subCategoryIds !== undefined) {
-      await this.setSubCategories(id, subCategoryIds, options);
+      await this.setSubCategories(id, subCategoryIds, { transaction });
     }
+
     return this.findById(id, options);
   }
 
@@ -49,14 +62,31 @@ class ProductRepository extends BaseRepository {
     return ProductSubCategory.bulkCreate(relationships, { ignoreDuplicates: true, ...options });
   }
 
-  removeAllSubCategories(productId, options = {}) {
-    return ProductSubCategory.destroy({ where: { productId }, ...options });
-  }
-
   async setSubCategories(productId, subCategoryIds, options = {}) {
-    await this.removeAllSubCategories(productId, options);
-    if (subCategoryIds?.length > 0) {
-      await this.addSubCategories(productId, subCategoryIds, options);
+    const { transaction } = options;
+    const queryOptions = transaction ? { transaction } : {};
+
+    const existing = await ProductSubCategory.findAll({
+      where: { productId },
+      attributes: ['subcategoryId'],
+      ...queryOptions,
+    });
+
+    const existingIds = existing.map(item => item.subcategoryId);
+
+    const toRemove = existingIds.filter(id => !subCategoryIds.includes(id));
+    const toAdd = subCategoryIds.filter(id => !existingIds.includes(id));
+
+    if (toRemove.length > 0) {
+      await ProductSubCategory.destroy({
+        where: { productId, subcategoryId: toRemove },
+        ...queryOptions,
+      });
+    }
+
+    if (toAdd.length > 0) {
+      const relationships = toAdd.map(subcategoryId => ({ productId, subcategoryId }));
+      await ProductSubCategory.bulkCreate(relationships, queryOptions);
     }
   }
 }

@@ -2,7 +2,7 @@ const Category = require('./category.model');
 const SubCategory = require('./subcategory.model');
 const Brand = require('./brand.model');
 const Product = require('./product.model');
-const ProductSubCategory = require('./productsubcategory.model'); // الجديد
+const ProductSubCategory = require('./productsubcategory.model');
 
 Category.hasMany(SubCategory, {
   foreignKey: 'categoryId',
