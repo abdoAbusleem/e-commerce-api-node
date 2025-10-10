@@ -3,6 +3,7 @@ const { Op } = require('sequelize');
 const BaseRepository = require('./base.repository');
 const HttpStatus = require('../constants/httpStatus');
 const ApiError = require('../utils/apiError');
+const messages = require('../constants/messages');
 
 class ProductRepository extends BaseRepository {
   constructor() {
@@ -13,10 +14,7 @@ class ProductRepository extends BaseRepository {
     const { includeDeleted = false, onlyDeleted = false } = options;
 
     if (includeDeleted && onlyDeleted)
-      throw new ApiError(
-        'Cannot use includeDeleted and onlyDeleted together',
-        HttpStatus.BAD_REQUEST
-      );
+      throw new ApiError(messages.errors.cannotUseIncludeAndOnlyDeleted, HttpStatus.BAD_REQUEST);
 
     const finalWhere = { ...(options.where || {}) };
     if (onlyDeleted) finalWhere.deletedAt = { [Op.ne]: null };

@@ -5,6 +5,7 @@ const ApiError = require('../utils/apiError');
 const withTransaction = require('../helpers/transactionHelper');
 const { productIncludes } = require('../constants/queryIncludes');
 const HttpStatus = require('../constants/httpStatus');
+const messages = require('../constants/messages');
 
 class ProductService {
   async createProduct(data) {
@@ -30,10 +31,7 @@ class ProductService {
     const { subCategoryIds, categoryId, ...productData } = data;
 
     if (categoryId) {
-      throw new ApiError(
-        'Cannot change category in update, use replaceProductCategory endpoint',
-        HttpStatus.BAD_REQUEST
-      );
+      throw new ApiError(messages.product.categoryChangeNotAllowed, HttpStatus.BAD_REQUEST);
     }
 
     return withTransaction(async transaction => {
@@ -111,7 +109,7 @@ class ProductService {
     if (!product) throwNotFound('product', id);
 
     if (!product.deletedAt) {
-      throw new ApiError('Product is not deleted', HttpStatus.BAD_REQUEST);
+      throw new ApiError(messages.product.productNotDeleted, HttpStatus.BAD_REQUEST);
     }
 
     await product.restore();

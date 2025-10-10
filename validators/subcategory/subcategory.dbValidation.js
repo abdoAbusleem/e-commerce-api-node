@@ -3,6 +3,7 @@ const SubCategoryRepository = require('../../repositories/subcategory.repository
 const { checkExists } = require('../../helpers/dbValidation.helper');
 const CategoryRepository = require('../../repositories/category.repository');
 const HttpStatus = require('../../constants/httpStatus');
+const messages = require('../../constants/messages');
 
 async function validateSubCategoriesInCategory(subCategoryIds, categoryId) {
   if (!subCategoryIds?.length) return [];
@@ -12,10 +13,7 @@ async function validateSubCategoriesInCategory(subCategoryIds, categoryId) {
   });
 
   if (rows.length !== subCategoryIds.length) {
-    throw new ApiError(
-      'Some subcategories do not belong to the provided category',
-      HttpStatus.BAD_REQUEST
-    );
+    throw new ApiError(messages.subCategory.invalidRelation, HttpStatus.BAD_REQUEST);
   }
 
   return rows;

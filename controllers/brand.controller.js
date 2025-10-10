@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const brandService = require('../services/brand.service');
 const { successResponse } = require('../utils/responseFormatter');
-const { successMessage } = require('../constants/messages');
+const messages = require('../constants/messages');
 const HttpStatus = require('../constants/httpStatus');
 
 // @des     Create Brand
@@ -11,7 +11,7 @@ exports.createBrand = asyncHandler(async (req, res) => {
   const brand = await brandService.createBrand(req.body);
   return successResponse(res, {
     data: brand,
-    message: successMessage('Brand', 'create'),
+    message: messages.brand.created,
     statusCode: HttpStatus.CREATED,
   });
 });
@@ -24,7 +24,7 @@ exports.getBrands = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: result.rows,
-    message: successMessage('Brand', 'list'),
+    message: messages.brand.listed,
     meta: result.meta,
     statusCode: HttpStatus.OK,
   });
@@ -37,7 +37,7 @@ exports.getBrandById = asyncHandler(async (req, res) => {
   const brand = await brandService.getBrandById(req.params.id);
   return successResponse(res, {
     data: brand,
-    message: successMessage('Brand', 'fetch'),
+    message: messages.brand.fetched,
     statusCode: HttpStatus.OK,
   });
 });
@@ -49,7 +49,7 @@ exports.updateBrand = asyncHandler(async (req, res) => {
   const updatedBrand = await brandService.updateBrand(req.params.id, req.body);
   return successResponse(res, {
     data: updatedBrand,
-    message: successMessage('Brand', 'update'),
+    message: messages.brand.updated,
     statusCode: HttpStatus.OK,
   });
 });
