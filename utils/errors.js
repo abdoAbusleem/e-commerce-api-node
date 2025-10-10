@@ -1,5 +1,5 @@
 const ApiError = require('./apiError');
-const HttpStatus = require('../common/httpStatus');
+const HttpStatus = require('../constants/httpStatus');
 
 function throwNotFound(entity, id) {
   throw new ApiError(`${entity} not found for id: ${id}`, HttpStatus.NOT_FOUND);

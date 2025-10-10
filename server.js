@@ -1,9 +1,14 @@
 const sequelize = require('./config/database');
 const app = require('./app');
 const dotenv = require('dotenv');
+const initJobs = require('./jobs/cleanupSoftDeleted');
+
 dotenv.config({
   path: 'config.env',
 });
+
+// Initialize jobs
+initJobs();
 
 // Connect with db
 sequelize.authenticate().then(() => console.log('DB connected ✅'));

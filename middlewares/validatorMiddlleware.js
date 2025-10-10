@@ -1,9 +1,8 @@
-const HttpStatus = require('../common/httpStatus');
+const HttpStatus = require('../constants/httpStatus');
 
 const validate = schemas => {
   return (req, res, next) => {
     try {
-      // لو schema جاي object فيه body/params
       if (schemas.body) {
         const { error, value } = schemas.body.validate(req.body, {
           abortEarly: false,

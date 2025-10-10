@@ -2,8 +2,8 @@
 const asyncHandler = require('express-async-handler');
 const categoryService = require('../services/category.service');
 const { successResponse } = require('../utils/responseFormatter');
-const { successMessage } = require('../common/messages');
-const HttpStatus = require('../common/httpStatus');
+const { successMessage } = require('../constants/messages');
+const HttpStatus = require('../constants/httpStatus');
 
 // @desc    Create Category
 // @route   POST /api/v1/categories

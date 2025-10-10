@@ -1,8 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const brandService = require('../services/brand.service');
 const { successResponse } = require('../utils/responseFormatter');
-const { successMessage } = require('../common/messages');
-const HttpStatus = require('../common/httpStatus');
+const { successMessage } = require('../constants/messages');
+const HttpStatus = require('../constants/httpStatus');
 
 // @des     Create Brand
 // @route   Post/  api/v1/Brands
