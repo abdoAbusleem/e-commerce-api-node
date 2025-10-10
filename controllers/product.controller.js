@@ -2,7 +2,7 @@
 const asyncHandler = require('express-async-handler');
 const productService = require('../services/product.service');
 const { successResponse } = require('../utils/responseFormatter');
-const { successMessage } = require('../constants/messages');
+const messages = require('../constants/messages');
 const HttpStatus = require('../constants/httpStatus');
 
 // @desc    Create Product
@@ -13,7 +13,7 @@ exports.createProduct = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: product,
-    message: successMessage('Product', 'create'),
+    message: messages.product.created,
     statusCode: HttpStatus.CREATED,
   });
 });
@@ -35,7 +35,7 @@ exports.getProducts = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: result.rows,
-    message: successMessage('Product', 'list'),
+    message: messages.product.listed,
     meta: result.meta,
     statusCode: HttpStatus.OK,
   });
@@ -49,7 +49,7 @@ exports.getProductById = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: product,
-    message: successMessage('Product', 'fetch'),
+    message: messages.product.fetched,
     statusCode: HttpStatus.OK,
   });
 });
@@ -62,7 +62,7 @@ exports.updateProduct = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: product,
-    message: successMessage('Product', 'update'),
+    message: messages.product.updated,
     statusCode: HttpStatus.OK,
   });
 });
@@ -78,7 +78,7 @@ exports.deleteProduct = asyncHandler(async (req, res) => {
   }
 
   return successResponse(res, {
-    message: successMessage('Product', 'delete'),
+    message: messages.product.deleted,
     statusCode: HttpStatus.OK,
   });
 });
@@ -94,7 +94,7 @@ exports.addSubCategoriesToProduct = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: product,
-    message: successMessage('Product', 'subcategories'),
+    message: messages.product.subcategoriesAdded,
     statusCode: HttpStatus.OK,
   });
 });
@@ -107,7 +107,7 @@ exports.restoreProduct = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: product,
-    message: successMessage('Product', 'restore'),
+    message: messages.product.restored,
     statusCode: HttpStatus.OK,
   });
 });

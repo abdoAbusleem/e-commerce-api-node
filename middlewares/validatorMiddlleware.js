@@ -1,4 +1,5 @@
 const HttpStatus = require('../constants/httpStatus');
+const messages = require('../constants/messages');
 
 const validate = schemas => {
   return (req, res, next) => {
@@ -12,7 +13,7 @@ const validate = schemas => {
         if (error) {
           return res.status(HttpStatus.BAD_REQUEST).json({
             success: false,
-            message: 'Validation error',
+            message: messages.validation.validationError,
             errors: error.details.map(err => ({
               field: err.path.join('.'),
               message: err.message,
@@ -31,7 +32,7 @@ const validate = schemas => {
         if (error) {
           return res.status(HttpStatus.BAD_REQUEST).json({
             success: false,
-            message: 'Validation error',
+            message: messages.validation.validationError,
             errors: error.details.map(err => ({
               field: err.path.join('.'),
               message: err.message,

@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const subCategoryService = require('../services/subcategory.service');
 const { successResponse } = require('../utils/responseFormatter');
-const { successMessage } = require('../constants/messages');
+const messages = require('../constants/messages');
 const HttpStatus = require('../constants/httpStatus');
 
 // @des     Create SubCategory
@@ -11,7 +11,7 @@ exports.createSubCategory = asyncHandler(async (req, res) => {
   const subCategory = await subCategoryService.createSubCategory(req.body);
   return successResponse(res, {
     data: subCategory,
-    message: successMessage('SubCategory', 'create'),
+    message: messages.subCategory.created,
     statusCode: HttpStatus.CREATED,
   });
 });
@@ -23,7 +23,7 @@ exports.getSubCategories = asyncHandler(async (req, res) => {
   const result = await subCategoryService.getAllSubCategories(req.query, req.params.categoryId);
   return successResponse(res, {
     data: result.rows,
-    message: successMessage('SubCategory', 'list'),
+    message: messages.subCategory.listed,
     meta: result.meta,
     statusCode: HttpStatus.OK,
   });
@@ -36,7 +36,7 @@ exports.getSubCategoryById = asyncHandler(async (req, res) => {
   const subCategory = await subCategoryService.getSubCategoryById(req.params.id);
   return successResponse(res, {
     data: subCategory,
-    message: successMessage('SubCategory', 'fetch'),
+    message: messages.subCategory.fetched,
     statusCode: HttpStatus.OK,
   });
 });
@@ -48,7 +48,7 @@ exports.updateSubCategory = asyncHandler(async (req, res) => {
   const subCategory = await subCategoryService.updateSubCategory(req.params.id, req.body);
   return successResponse(res, {
     data: subCategory,
-    message: successMessage('SubCategory', 'update'),
+    message: messages.subCategory.updated,
     statusCode: HttpStatus.OK,
   });
 });

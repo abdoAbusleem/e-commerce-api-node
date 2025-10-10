@@ -5,6 +5,7 @@ const {
   ForeignKeyConstraintError,
   DatabaseError,
 } = require('sequelize');
+const messages = require('../constants/messages');
 
 function handleSequelizeError(err) {
   if (err instanceof ValidationError) {
@@ -17,21 +18,21 @@ function handleSequelizeError(err) {
   if (err instanceof UniqueConstraintError) {
     return {
       statusCode: HttpStatus.BAD_REQUEST,
-      message: `This value must be unique. Duplicate value: ${err.errors[0]?.value}.`,
+      message: messages.sequelize.uniqueConstraintError(err.errors[0]?.value),
     };
   }
 
   if (err instanceof ForeignKeyConstraintError) {
     return {
       statusCode: HttpStatus.BAD_REQUEST,
-      message: `Invalid reference id: related ${err.table} record does not exist.`,
+      message: messages.sequelize.foreignKeyConstraintError(err.table),
     };
   }
 
   if (err instanceof DatabaseError) {
     return {
       statusCode: HttpStatus.BAD_REQUEST,
-      message: 'Database error occurred. Please try again later.',
+      message: messages.sequelize.databaseError,
     };
   }
 

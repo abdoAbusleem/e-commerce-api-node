@@ -2,7 +2,7 @@
 const asyncHandler = require('express-async-handler');
 const categoryService = require('../services/category.service');
 const { successResponse } = require('../utils/responseFormatter');
-const { successMessage } = require('../constants/messages');
+const messages = require('../constants/messages');
 const HttpStatus = require('../constants/httpStatus');
 
 // @desc    Create Category
@@ -13,7 +13,7 @@ exports.createCategory = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: category,
-    message: successMessage('Category', 'create'),
+    message: messages.category.created,
     statusCode: HttpStatus.CREATED,
   });
 });
@@ -26,7 +26,7 @@ exports.getCategories = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: result.rows,
-    message: successMessage('Category', 'list'),
+    message: messages.category.listed,
     meta: result.meta,
     statusCode: HttpStatus.OK,
   });
@@ -40,7 +40,7 @@ exports.getCategoryById = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: category,
-    message: successMessage('Category', 'fetch'),
+    message: messages.category.fetched,
     statusCode: HttpStatus.OK,
   });
 });
@@ -53,7 +53,7 @@ exports.updateCategory = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: category,
-    message: successMessage('Category', 'update'),
+    message: messages.category.updated,
     statusCode: HttpStatus.OK,
   });
 });
