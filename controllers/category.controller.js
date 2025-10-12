@@ -2,8 +2,7 @@
 const asyncHandler = require('express-async-handler');
 const categoryService = require('../services/category.service');
 const { successResponse } = require('../utils/responseFormatter');
-const messages = require('../constants/messages');
-const HttpStatus = require('../constants/httpStatus');
+const { MESSAGES, HTTP_STATUS } = require('../constants');
 
 // @desc    Create Category
 // @route   POST /api/v1/categories
@@ -13,8 +12,8 @@ exports.createCategory = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: category,
-    message: messages.category.created,
-    statusCode: HttpStatus.CREATED,
+    message: MESSAGES.SUCCESS.CATEGORY.CREATED,
+    statusCode: HTTP_STATUS.CREATED,
   });
 });
 
@@ -26,9 +25,9 @@ exports.getCategories = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: result.rows,
-    message: messages.category.listed,
+    message: MESSAGES.SUCCESS.CATEGORY.LISTED,
     meta: result.meta,
-    statusCode: HttpStatus.OK,
+    statusCode: HTTP_STATUS.OK,
   });
 });
 
@@ -40,8 +39,8 @@ exports.getCategoryById = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: category,
-    message: messages.category.fetched,
-    statusCode: HttpStatus.OK,
+    message: MESSAGES.SUCCESS.CATEGORY.FETCHED,
+    statusCode: HTTP_STATUS.OK,
   });
 });
 
@@ -53,8 +52,8 @@ exports.updateCategory = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: category,
-    message: messages.category.updated,
-    statusCode: HttpStatus.OK,
+    message: MESSAGES.SUCCESS.CATEGORY.UPDATED,
+    statusCode: HTTP_STATUS.OK,
   });
 });
 
@@ -64,5 +63,5 @@ exports.updateCategory = asyncHandler(async (req, res) => {
 exports.deleteCategory = asyncHandler(async (req, res) => {
   await categoryService.deleteCategory(req.params.id);
 
-  return res.status(HttpStatus.NO_CONTENT).send();
+  return res.status(HTTP_STATUS.NO_CONTENT).send();
 });

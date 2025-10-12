@@ -1,6 +1,6 @@
 const ApiError = require('../utils/apiError');
 const { throwNotFound } = require('../utils/errors');
-const HttpStatus = require('../constants/httpStatus');
+const { MESSAGES, HTTP_STATUS } = require('../constants');
 
 async function checkExists(repository, id, entityName) {
   if (!id) return null;
@@ -13,7 +13,7 @@ async function checkManyExists(repository, ids, entityName) {
   if (!ids?.length) return [];
   const entities = await repository.findByIds(ids);
   if (entities.length !== ids.length) {
-    throw new ApiError(`Some ${entityName} not found`, HttpStatus.NOT_FOUND);
+    throw new ApiError(MESSAGES.ERROR_BUILDERS.SOME_NOT_FOUND(entityName), HTTP_STATUS.NOT_FOUND);
   }
   return entities;
 }

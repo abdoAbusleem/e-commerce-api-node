@@ -2,8 +2,7 @@ const ApiError = require('../../utils/apiError');
 const SubCategoryRepository = require('../../repositories/subcategory.repository');
 const { checkExists } = require('../../helpers/dbValidation.helper');
 const CategoryRepository = require('../../repositories/category.repository');
-const HttpStatus = require('../../constants/httpStatus');
-const messages = require('../../constants/messages');
+const { MESSAGES, HTTP_STATUS } = require('../../constants');
 
 async function validateSubCategoriesInCategory(subCategoryIds, categoryId) {
   if (!subCategoryIds?.length) return [];
@@ -13,7 +12,7 @@ async function validateSubCategoriesInCategory(subCategoryIds, categoryId) {
   });
 
   if (rows.length !== subCategoryIds.length) {
-    throw new ApiError(messages.subCategory.invalidRelation, HttpStatus.BAD_REQUEST);
+    throw new ApiError(MESSAGES.ERROR.SUBCATEGORY.INVALID_RELATION, HTTP_STATUS.BAD_REQUEST);
   }
 
   return rows;

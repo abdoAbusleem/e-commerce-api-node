@@ -13,6 +13,7 @@ async function paginateCursor(model, options = {}) {
     searchFields = [],
     sort = null,
     includes = [],
+    paranoid = true,
   } = options;
 
   const safeLimit = Math.max(1, Math.min(100, parseInt(limit)));
@@ -40,34 +41,55 @@ async function paginateCursor(model, options = {}) {
   const queryWhere = { ...where, ...cursorWhere };
 
   if (search && searchFields.length) {
-    queryWhere[Op.or] = searchFields.map(field => ({
-      [field]: { [Op.iLike]: `%${search}%` },
-    }));
+    queryWhere[Op.or] = searchFields.map(field => {
+      if (field.includes('.')) {
+        const [association, associationField] = field.split('.');
+        return {
+          [`$${association}.${associationField}$`]: {
+            [Op.iLike]: `%${search}%`,
+          },
+        };
+      }
+      return {
+        [field]: { [Op.iLike]: `%${search}%` },
+      };
+    });
   }
 
   const order = sort ? [[sort.key, sort.direction || 'ASC']] : [[key, orderDirection]];
 
-  const rows = await model.findAll({
+  const { rows, count: totalCount } = await model.findAndCountAll({
     where: queryWhere,
     order,
     limit: safeLimit + 1,
     include: includes,
+    distinct: true,
+    paranoid,
   });
 
-  if (before) rows.reverse();
+  const processedRows = before ? rows.reverse() : rows;
 
-  const hasNext = !before && rows.length > safeLimit;
+  const hasNext = !before && processedRows.length > safeLimit;
   const hasPrevious = !!before || !!after;
-  const data = rows.length > safeLimit ? rows.slice(0, -1) : rows;
+  const data = processedRows.length > safeLimit ? processedRows.slice(0, -1) : processedRows;
+
+  let nextCursor = null;
+  let previousCursor = null;
+
+  if (data.length > 0) {
+    nextCursor = encodeCursor(data[data.length - 1][key]);
+    previousCursor = encodeCursor(data[0][key]);
+  }
 
   return {
     data,
     pageInfo: {
       hasNextPage: hasNext,
       hasPreviousPage: hasPrevious,
-      nextCursor: data.length ? encodeCursor(data[data.length - 1][key]) : null,
-      previousCursor: data.length ? encodeCursor(data[0][key]) : null,
+      nextCursor: hasNext ? nextCursor : null,
+      previousCursor: hasPrevious ? previousCursor : null,
       count: data.length,
+      totalCount,
     },
   };
 }

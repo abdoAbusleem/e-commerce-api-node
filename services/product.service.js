@@ -3,9 +3,7 @@ const { validateProductData } = require('../validators/product/product.dbValidat
 const { throwNotFound } = require('../utils/errors');
 const ApiError = require('../utils/apiError');
 const withTransaction = require('../helpers/transactionHelper');
-const { productIncludes } = require('../constants/queryIncludes');
-const HttpStatus = require('../constants/httpStatus');
-const messages = require('../constants/messages');
+const { MESSAGES, HTTP_STATUS, INCLUDES } = require('../constants');
 
 class ProductService {
   async createProduct(data) {
@@ -22,7 +20,7 @@ class ProductService {
 
       return productRepository.findById(product.id, {
         transaction,
-        include: productIncludes.withSubCategories,
+        include: INCLUDES.PRODUCT_INCLUDES.withSubCategories,
       });
     });
   }
@@ -31,7 +29,7 @@ class ProductService {
     const { subCategoryIds, categoryId, ...productData } = data;
 
     if (categoryId) {
-      throw new ApiError(messages.product.categoryChangeNotAllowed, HttpStatus.BAD_REQUEST);
+      throw new ApiError(MESSAGES.ERROR.PRODUCT.CANNOT_CHANGE_CATEGORY, HTTP_STATUS.BAD_REQUEST);
     }
 
     return withTransaction(async transaction => {
@@ -42,14 +40,14 @@ class ProductService {
 
       return productRepository.updateWithRelations(id, productData, subCategoryIds, {
         transaction,
-        include: productIncludes.withSubCategories,
+        include: INCLUDES.PRODUCT_INCLUDES.withSubCategories,
       });
     });
   }
 
   async getProductById(id) {
     const product = await productRepository.findById(id, {
-      include: productIncludes.withSubCategories,
+      include: INCLUDES.PRODUCT_INCLUDES.withSubCategories,
     });
     if (!product) throwNotFound('product', id);
     return product;
@@ -67,7 +65,7 @@ class ProductService {
       limit,
       includeDeleted,
       onlyDeleted,
-      include: productIncludes.withSubCategories,
+      include: INCLUDES.PRODUCT_INCLUDES.withSubCategories,
     });
     return {
       rows,
@@ -96,20 +94,20 @@ class ProductService {
     await productRepository.addSubCategories(id, subCategoryIds);
 
     return productRepository.findById(id, {
-      include: productIncludes.withSubCategories,
+      include: INCLUDES.PRODUCT_INCLUDES.withSubCategories,
     });
   }
 
   async restoreProduct(id) {
     const product = await productRepository.findById(id, {
       paranoid: false,
-      include: productIncludes.withSubCategories,
+      include: INCLUDES.PRODUCT_INCLUDES.withSubCategories,
     });
 
     if (!product) throwNotFound('product', id);
 
     if (!product.deletedAt) {
-      throw new ApiError(messages.product.productNotDeleted, HttpStatus.BAD_REQUEST);
+      throw new ApiError(MESSAGES.ERROR.PRODUCT.NOT_DELETED, HTTP_STATUS.BAD_REQUEST);
     }
 
     await product.restore();
