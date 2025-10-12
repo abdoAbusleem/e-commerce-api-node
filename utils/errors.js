@@ -5,11 +5,11 @@ function throwNotFound(entity, id) {
   throw new ApiError(MESSAGES.ERROR.ERROR_BUILDERS.NOT_FOUND(entity, id), HTTP_STATUS.NOT_FOUND);
 }
 
-function throwBadRequest(message = MESSAGES.ERROR.ERROR_BUILDERS.BAD_REQUEST) {
+function throwBadRequest(message = MESSAGES.ERROR.GENERAL.BAD_REQUEST) {
   throw new ApiError(message, HTTP_STATUS.BAD_REQUEST);
 }
 
-function throwUnauthorized(message = MESSAGES.ERROR.ERROR_BUILDERS.UNAUTHORIZED) {
+function throwUnauthorized(message = MESSAGES.ERROR.GENERAL.UNAUTHORIZED) {
   throw new ApiError(message, HTTP_STATUS.UNAUTHORIZED);
 }
 
