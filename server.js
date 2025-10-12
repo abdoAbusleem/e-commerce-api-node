@@ -1,7 +1,7 @@
 const sequelize = require('./config/database');
 const app = require('./app');
 const dotenv = require('dotenv');
-const initJobs = require('./jobs/cleanupSoftDeleted');
+const initJobs = require('./jobs');
 
 dotenv.config({
   path: 'config.env',

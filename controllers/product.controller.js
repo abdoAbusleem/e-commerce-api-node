@@ -1,10 +1,7 @@
-// controllers/category.controller.js
 const asyncHandler = require('express-async-handler');
 const productService = require('../services/product.service');
 const { successResponse } = require('../utils/responseFormatter');
-const messages = require('../constants/messages');
-const HttpStatus = require('../constants/httpStatus');
-
+const { MESSAGES, HTTP_STATUS } = require('../constants');
 // @desc    Create Product
 // @route   POST /api/v1/products
 // @access  Private
@@ -13,8 +10,8 @@ exports.createProduct = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: product,
-    message: messages.product.created,
-    statusCode: HttpStatus.CREATED,
+    message: MESSAGES.SUCCESS.PRODUCT.CREATED,
+    statusCode: HTTP_STATUS.CREATED,
   });
 });
 
@@ -35,9 +32,9 @@ exports.getProducts = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: result.rows,
-    message: messages.product.listed,
+    message: MESSAGES.SUCCESS.PRODUCT.LISTED,
     meta: result.meta,
-    statusCode: HttpStatus.OK,
+    statusCode: HTTP_STATUS.OK,
   });
 });
 
@@ -49,8 +46,8 @@ exports.getProductById = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: product,
-    message: messages.product.fetched,
-    statusCode: HttpStatus.OK,
+    message: MESSAGES.SUCCESS.PRODUCT.FETCHED,
+    statusCode: HTTP_STATUS.OK,
   });
 });
 
@@ -62,8 +59,8 @@ exports.updateProduct = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: product,
-    message: messages.product.updated,
-    statusCode: HttpStatus.OK,
+    message: MESSAGES.SUCCESS.PRODUCT.UPDATED,
+    statusCode: HTTP_STATUS.OK,
   });
 });
 
@@ -74,12 +71,12 @@ exports.deleteProduct = asyncHandler(async (req, res) => {
   await productService.deleteProduct(req.params.id, req.query);
 
   if (req.query.force === 'true') {
-    return res.status(HttpStatus.NO_CONTENT).send();
+    return res.status(HTTP_STATUS.NO_CONTENT).send();
   }
 
   return successResponse(res, {
-    message: messages.product.deleted,
-    statusCode: HttpStatus.OK,
+    message: MESSAGES.SUCCESS.PRODUCT.DELETED,
+    statusCode: HTTP_STATUS.OK,
   });
 });
 
@@ -94,8 +91,8 @@ exports.addSubCategoriesToProduct = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: product,
-    message: messages.product.subcategoriesAdded,
-    statusCode: HttpStatus.OK,
+    message: MESSAGES.SUCCESS.PRODUCT.SUBCATEGORIES_ADDED,
+    statusCode: HTTP_STATUS.OK,
   });
 });
 
@@ -107,7 +104,7 @@ exports.restoreProduct = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: product,
-    message: messages.product.restored,
-    statusCode: HttpStatus.OK,
+    message: MESSAGES.SUCCESS.PRODUCT.RESTORED,
+    statusCode: HTTP_STATUS.OK,
   });
 });

@@ -1,8 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const brandService = require('../services/brand.service');
 const { successResponse } = require('../utils/responseFormatter');
-const messages = require('../constants/messages');
-const HttpStatus = require('../constants/httpStatus');
+const { MESSAGES, HTTP_STATUS } = require('../constants');
 
 // @des     Create Brand
 // @route   Post/  api/v1/Brands
@@ -11,8 +10,8 @@ exports.createBrand = asyncHandler(async (req, res) => {
   const brand = await brandService.createBrand(req.body);
   return successResponse(res, {
     data: brand,
-    message: messages.brand.created,
-    statusCode: HttpStatus.CREATED,
+    message: MESSAGES.SUCCESS.BRAND.CREATED,
+    statusCode: HTTP_STATUS.CREATED,
   });
 });
 
@@ -24,9 +23,9 @@ exports.getBrands = asyncHandler(async (req, res) => {
 
   return successResponse(res, {
     data: result.rows,
-    message: messages.brand.listed,
+    message: MESSAGES.SUCCESS.BRAND.LISTED,
     meta: result.meta,
-    statusCode: HttpStatus.OK,
+    statusCode: HTTP_STATUS.OK,
   });
 });
 
@@ -37,8 +36,8 @@ exports.getBrandById = asyncHandler(async (req, res) => {
   const brand = await brandService.getBrandById(req.params.id);
   return successResponse(res, {
     data: brand,
-    message: messages.brand.fetched,
-    statusCode: HttpStatus.OK,
+    message: MESSAGES.SUCCESS.BRAND.FETCHED,
+    statusCode: HTTP_STATUS.OK,
   });
 });
 
@@ -49,8 +48,8 @@ exports.updateBrand = asyncHandler(async (req, res) => {
   const updatedBrand = await brandService.updateBrand(req.params.id, req.body);
   return successResponse(res, {
     data: updatedBrand,
-    message: messages.brand.updated,
-    statusCode: HttpStatus.OK,
+    message: MESSAGES.SUCCESS.BRAND.UPDATED,
+    statusCode: HTTP_STATUS.OK,
   });
 });
 
@@ -59,5 +58,5 @@ exports.updateBrand = asyncHandler(async (req, res) => {
 // @access  Private
 exports.deleteBrand = asyncHandler(async (req, res) => {
   await brandService.deleteBrand(req.params.id);
-  return res.status(HttpStatus.NO_CONTENT).send();
+  return res.status(HTTP_STATUS.NO_CONTENT).send();
 });

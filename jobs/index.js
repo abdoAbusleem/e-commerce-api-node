@@ -1,5 +1,5 @@
-const autoDeleteSoftDeletedProducts = require('./autoDeleteSoftDeletedProducts');
+const softDeleteCleanup = require('./softDeleteCleanup');
 
 module.exports = function initJobs() {
-  autoDeleteSoftDeletedProducts();
+  softDeleteCleanup();
 };

@@ -1,5 +1,5 @@
-const productIncludes = require('./product.includes');
+const PRODUCT_INCLUDES = require('./product.includes');
 
 module.exports = {
-  productIncludes,
+  PRODUCT_INCLUDES,
 };

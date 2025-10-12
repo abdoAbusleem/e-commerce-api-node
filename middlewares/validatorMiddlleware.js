@@ -1,5 +1,4 @@
-const HttpStatus = require('../constants/httpStatus');
-const messages = require('../constants/messages');
+const { MESSAGES, HTTP_STATUS } = require('../constants');
 
 const validate = schemas => {
   return (req, res, next) => {
@@ -11,9 +10,9 @@ const validate = schemas => {
           stripUnknown: false,
         });
         if (error) {
-          return res.status(HttpStatus.BAD_REQUEST).json({
+          return res.status(HTTP_STATUS.BAD_REQUEST).json({
             success: false,
-            message: messages.validation.validationError,
+            message: MESSAGES.ERROR.GENERAL.VALIDATION_ERROR,
             errors: error.details.map(err => ({
               field: err.path.join('.'),
               message: err.message,
@@ -30,9 +29,9 @@ const validate = schemas => {
           stripUnknown: true,
         });
         if (error) {
-          return res.status(HttpStatus.BAD_REQUEST).json({
+          return res.status(HTTP_STATUS.BAD_REQUEST).json({
             success: false,
-            message: messages.validation.validationError,
+            message: MESSAGES.ERROR.GENERAL.VALIDATION_ERROR,
             errors: error.details.map(err => ({
               field: err.path.join('.'),
               message: err.message,

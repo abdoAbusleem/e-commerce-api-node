@@ -1,8 +1,8 @@
-const HttpStatus = require('../constants/httpStatus');
+const { HTTP_STATUS } = require('../constants');
 
 function successResponse(
   res,
-  { data = null, message = 'success', meta = null, statusCode = HttpStatus.OK }
+  { data = null, message = 'success', meta = null, statusCode = HTTP_STATUS.OK }
 ) {
   const response = { success: true, message };
 
@@ -14,7 +14,7 @@ function successResponse(
 
 function errorResponse(
   res,
-  { message = 'Something went wrong', errors = null, statusCode = HttpStatus.BAD_REQUEST }
+  { message = 'Something went wrong', errors = null, statusCode = HTTP_STATUS.BAD_REQUEST }
 ) {
   const response = { success: false, message };
 

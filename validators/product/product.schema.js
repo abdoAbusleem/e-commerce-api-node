@@ -17,13 +17,10 @@ const createProductSchema = Joi.object({
   ratingsQuantity: Joi.number().optional(),
 });
 
-const updateProductSchema = createProductSchema
-  .fork(['title', 'description', 'price', 'quantity', 'imageCover', 'subCategoryIds'], schema =>
-    schema.optional()
-  )
-  .append({
-    categoryId: Joi.forbidden(),
-  });
+const updateProductSchema = createProductSchema.fork(
+  ['title', 'description', 'price', 'quantity', 'imageCover', 'subCategoryIds'],
+  schema => schema.optional()
+);
 
 const addSubCategoriesSchema = Joi.object({
   subCategoryIds: Joi.array().items(Joi.string().uuid()).min(1).required(),

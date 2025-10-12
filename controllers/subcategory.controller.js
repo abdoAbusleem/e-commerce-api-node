@@ -1,8 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const subCategoryService = require('../services/subcategory.service');
 const { successResponse } = require('../utils/responseFormatter');
-const messages = require('../constants/messages');
-const HttpStatus = require('../constants/httpStatus');
+const { MESSAGES, HTTP_STATUS } = require('../constants');
 
 // @des     Create SubCategory
 // @route   Post/  api/v1/subcategories
@@ -11,8 +10,8 @@ exports.createSubCategory = asyncHandler(async (req, res) => {
   const subCategory = await subCategoryService.createSubCategory(req.body);
   return successResponse(res, {
     data: subCategory,
-    message: messages.subCategory.created,
-    statusCode: HttpStatus.CREATED,
+    message: MESSAGES.SUCCESS.SUBCATEGORY.CREATED,
+    statusCode: HTTP_STATUS.CREATED,
   });
 });
 
@@ -23,9 +22,9 @@ exports.getSubCategories = asyncHandler(async (req, res) => {
   const result = await subCategoryService.getAllSubCategories(req.query, req.params.categoryId);
   return successResponse(res, {
     data: result.rows,
-    message: messages.subCategory.listed,
+    message: MESSAGES.SUCCESS.SUBCATEGORY.LISTED,
     meta: result.meta,
-    statusCode: HttpStatus.OK,
+    statusCode: HTTP_STATUS.OK,
   });
 });
 
@@ -36,8 +35,8 @@ exports.getSubCategoryById = asyncHandler(async (req, res) => {
   const subCategory = await subCategoryService.getSubCategoryById(req.params.id);
   return successResponse(res, {
     data: subCategory,
-    message: messages.subCategory.fetched,
-    statusCode: HttpStatus.OK,
+    message: MESSAGES.SUCCESS.SUBCATEGORY.FETCHED,
+    statusCode: HTTP_STATUS.OK,
   });
 });
 
@@ -48,8 +47,8 @@ exports.updateSubCategory = asyncHandler(async (req, res) => {
   const subCategory = await subCategoryService.updateSubCategory(req.params.id, req.body);
   return successResponse(res, {
     data: subCategory,
-    message: messages.subCategory.updated,
-    statusCode: HttpStatus.OK,
+    message: MESSAGES.SUCCESS.SUBCATEGORY.UPDATED,
+    statusCode: HTTP_STATUS.OK,
   });
 });
 
@@ -58,5 +57,5 @@ exports.updateSubCategory = asyncHandler(async (req, res) => {
 // @access  Private
 exports.deleteSubCategory = asyncHandler(async (req, res) => {
   await subCategoryService.deleteSubCategory(req.params.id);
-  return res.status(HttpStatus.NO_CONTENT).send();
+  return res.status(HTTP_STATUS.NO_CONTENT).send();
 });

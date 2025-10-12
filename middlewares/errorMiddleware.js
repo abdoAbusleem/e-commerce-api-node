@@ -1,11 +1,10 @@
 const handleSequelizeError = require('../utils/sequelizeErrorHandler');
-const HttpStatus = require('../constants/httpStatus');
+const { HTTP_STATUS } = require('../constants');
 
 const globalError = (err, req, res, next) => {
-  err.statusCode = err.statusCode || HttpStatus.INTERNAL_SERVER_ERROR;
+  err.statusCode = err.statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR;
   err.status = err.status || 'error';
 
-  // handle sequelize error
   const sequelizeHandled = handleSequelizeError(err);
   if (sequelizeHandled) {
     err.statusCode = sequelizeHandled.statusCode;

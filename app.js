@@ -4,7 +4,7 @@ const cors = require('cors');
 
 const ApiError = require('./utils/apiError');
 const globalError = require('./middlewares/errorMiddleware');
-const HttpStatus = require('./constants/httpStatus');
+const { HTTP_STATUS } = require('./constants');
 
 // Routes
 const categoryRoute = require('./routes/category.routes');
@@ -31,7 +31,7 @@ app.use('/api/v1/brands', brandRoute);
 
 // Handle unhandled routes
 app.use((req, res, next) => {
-  const err = new ApiError(`Route not found: ${req.originalUrl}`, HttpStatus.NOT_FOUND);
+  const err = new ApiError(`Route not found: ${req.originalUrl}`, HTTP_STATUS.NOT_FOUND);
   next(err);
 });
 
