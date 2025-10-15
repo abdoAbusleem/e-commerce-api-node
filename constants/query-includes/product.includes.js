@@ -9,7 +9,12 @@ const PRODUCT_INCLUDES = {
   ],
 
   full: [
-    { model: SubCategory, as: 'subCategories', through: { attributes: [] } },
+    {
+      model: SubCategory,
+      as: 'subCategories',
+      through: { attributes: [] },
+      required: false,
+    },
     { model: Category, as: 'category' },
     { model: Brand, as: 'brand' },
   ],

@@ -1,4 +1,4 @@
-const handleSequelizeError = require('../utils/sequelizeErrorHandler');
+const { handleSequelizeError } = require('../utils');
 const { HTTP_STATUS } = require('../constants');
 
 const globalError = (err, req, res, next) => {

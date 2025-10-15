@@ -9,12 +9,7 @@ const updateSubCategorySchema = createSubCategorySchema.fork(['name', 'categoryI
   schema.optional()
 );
 
-const idParamSchema = Joi.object({
-  id: Joi.string().uuid().required(),
-});
-
 module.exports = {
   createSubCategorySchema,
   updateSubCategorySchema,
-  idParamSchema,
 };

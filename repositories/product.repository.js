@@ -1,8 +1,6 @@
 const { Product, ProductSubCategory } = require('../models/associations');
 const { Op } = require('sequelize');
 const BaseRepository = require('./base.repository');
-const ApiError = require('../utils/apiError');
-const { MESSAGES, HTTP_STATUS } = require('../constants');
 
 class ProductRepository extends BaseRepository {
   constructor() {
@@ -11,12 +9,6 @@ class ProductRepository extends BaseRepository {
 
   findAll(options = {}) {
     const { includeDeleted = false, onlyDeleted = false } = options;
-
-    if (includeDeleted && onlyDeleted)
-      throw new ApiError(
-        MESSAGES.ERROR.REPOSITORY.CANNOT_USE_INCLUDE_AND_ONLY_DELETED,
-        HTTP_STATUS.BAD_REQUEST
-      );
 
     const finalWhere = { ...(options.where || {}) };
     if (onlyDeleted) finalWhere.deletedAt = { [Op.ne]: null };
@@ -47,10 +39,6 @@ class ProductRepository extends BaseRepository {
 
   forceDelete(id) {
     return this.Model.destroy({ where: { id }, force: true, paranoid: false });
-  }
-
-  softDelete(id) {
-    return this.Model.destroy({ where: { id } });
   }
 
   restore(id) {

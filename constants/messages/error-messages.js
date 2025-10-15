@@ -30,6 +30,7 @@ const ERROR_BUILDERS = {
   UNIQUE_CONSTRAINT_ERROR: value => `This value must be unique. Duplicate value: ${value}.`,
   FOREIGN_KEY_CONSTRAINT_ERROR: table =>
     `Invalid reference id: related ${table} record does not exist.`,
+  ALREADY_EXISTS: (entity, field = 'value') => `${entity} with this ${field} already exists`,
 };
 
 module.exports = {

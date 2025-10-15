@@ -1,28 +1,22 @@
-const ApiError = require('../../utils/apiError');
+const { checkUniqueName } = require('../../helpers');
 const SubCategoryRepository = require('../../repositories/subcategory.repository');
-const { checkExists } = require('../../helpers/dbValidation.helper');
+const { checkExists } = require('../../helpers');
 const CategoryRepository = require('../../repositories/category.repository');
-const { MESSAGES, HTTP_STATUS } = require('../../constants');
 
-async function validateSubCategoriesInCategory(subCategoryIds, categoryId) {
-  if (!subCategoryIds?.length) return [];
+async function validateSubCategoryData(subCategoryData, excludeId = null) {
+  const { name, categoryId } = subCategoryData;
 
-  const { rows } = await SubCategoryRepository.findAll({
-    where: { id: subCategoryIds, categoryId },
-  });
+  const validations = [
+    name &&
+      categoryId &&
+      checkUniqueName(SubCategoryRepository, name, 'subcategory', excludeId, { categoryId }),
 
-  if (rows.length !== subCategoryIds.length) {
-    throw new ApiError(MESSAGES.ERROR.SUBCATEGORY.INVALID_RELATION, HTTP_STATUS.BAD_REQUEST);
-  }
+    categoryId && checkExists(CategoryRepository, categoryId, 'category'),
+  ].filter(Boolean);
 
-  return rows;
-}
-
-async function validateCategoryExists(categoryId) {
-  await checkExists(CategoryRepository, categoryId, 'category');
+  await Promise.all(validations);
 }
 
 module.exports = {
-  validateSubCategoriesInCategory,
-  validateCategoryExists,
+  validateSubCategoryData,
 };

@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const productService = require('../services/product.service');
-const { successResponse } = require('../utils/responseFormatter');
+const { successResponse } = require('../utils');
 const { MESSAGES, HTTP_STATUS } = require('../constants');
 // @desc    Create Product
 // @route   POST /api/v1/products

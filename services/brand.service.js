@@ -1,8 +1,10 @@
 const BrandRepository = require('../repositories/brand.repository');
-const { throwNotFound } = require('../utils/errors');
+const { throwNotFound } = require('../utils');
+const { validateBrandData } = require('../validators/brand/brand.dbValidation');
 
 class BrandService {
   async createBrand(data) {
+    await validateBrandData(data.name);
     const brand = await BrandRepository.create(data);
     return brand;
   }
@@ -28,16 +30,17 @@ class BrandService {
   }
 
   async updateBrand(id, data) {
-    const exists = await BrandRepository.exists(id);
-    if (!exists) throwNotFound('brand', id);
+    const brand = await BrandRepository.findById(id);
+    if (!brand) throwNotFound('brand', id);
+    await validateBrandData(data.name, id);
 
-    const brand = await BrandRepository.update(id, data);
-    return brand;
+    const updatedBrand = await BrandRepository.update(id, data);
+    return updatedBrand;
   }
 
   async deleteBrand(id) {
-    const exists = await BrandRepository.exists(id);
-    if (!exists) throwNotFound('brand', id);
+    const brand = await BrandRepository.findById(id);
+    if (!brand) throwNotFound('brand', id);
 
     await BrandRepository.delete(id);
   }
