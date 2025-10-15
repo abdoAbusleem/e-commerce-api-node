@@ -1,7 +1,7 @@
 // controllers/category.controller.js
 const asyncHandler = require('express-async-handler');
 const categoryService = require('../services/category.service');
-const { successResponse } = require('../utils/responseFormatter');
+const { successResponse } = require('../utils');
 const { MESSAGES, HTTP_STATUS } = require('../constants');
 
 // @desc    Create Category

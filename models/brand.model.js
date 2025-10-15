@@ -1,6 +1,6 @@
 const { DataTypes, Model } = require('sequelize');
+const { sequelize } = require('../config');
 const slugify = require('sequelize-slugify');
-const sequelize = require('../config/database');
 
 class Brand extends Model {}
 

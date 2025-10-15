@@ -2,15 +2,12 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 
-const ApiError = require('./utils/apiError');
-const globalError = require('./middlewares/errorMiddleware');
+const ApiError = require('./utils');
+const { globalError } = require('./middlewares');
 const { HTTP_STATUS } = require('./constants');
 
 // Routes
-const categoryRoute = require('./routes/category.routes');
-const subCategoryRoute = require('./routes/subcategory.routes');
-const brandRoute = require('./routes/brand.routes');
-const productRoute = require('./routes/product.routes');
+const routes = require('./routes');
 
 const app = express();
 
@@ -24,10 +21,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Mount Routes
-app.use('/api/v1/categories', categoryRoute);
-app.use('/api/v1/subcategories', subCategoryRoute);
-app.use('/api/v1/products', productRoute);
-app.use('/api/v1/brands', brandRoute);
+app.use('/api/v1', routes);
 
 // Handle unhandled routes
 app.use((req, res, next) => {

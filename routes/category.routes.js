@@ -9,10 +9,10 @@ const {
 const {
   createCategorySchema,
   updateCategorySchema,
-  idParamSchema,
   NestedRouteParams,
 } = require('../validators/category/category.schema');
-const validate = require('../middlewares/validatorMiddlleware');
+const { validate } = require('../middlewares');
+const { idParamSchema } = require('../validators/shared/id.schema');
 const subCategoryRoutes = require('./subcategory.routes');
 
 const router = express.Router();

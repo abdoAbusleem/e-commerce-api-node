@@ -11,10 +11,10 @@ const {
 const {
   createProductSchema,
   updateProductSchema,
-  idParamSchema,
   addSubCategoriesSchema,
 } = require('../validators/product/product.schema');
-const validate = require('../middlewares/validatorMiddlleware');
+const { validate } = require('../middlewares');
+const { idParamSchema } = require('../validators/shared/id.schema');
 
 const router = express.Router();
 

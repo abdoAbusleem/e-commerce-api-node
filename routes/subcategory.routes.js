@@ -9,10 +9,10 @@ const {
 const {
   createSubCategorySchema,
   updateSubCategorySchema,
-  idParamSchema,
 } = require('../validators/subcategory/subcategory.schema');
-const { setParamToBody } = require('../middlewares/nestedRoutes');
-const validate = require('../middlewares/validatorMiddlleware');
+const { idParamSchema } = require('../validators/shared/id.schema');
+
+const { validate, setParamToBody } = require('../middlewares');
 
 const router = express.Router({ mergeParams: true });
 

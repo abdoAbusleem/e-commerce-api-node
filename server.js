@@ -1,4 +1,4 @@
-const sequelize = require('./config/database');
+const { sequelize } = require('./config');
 const app = require('./app');
 const dotenv = require('dotenv');
 const initJobs = require('./jobs');

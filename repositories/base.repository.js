@@ -64,19 +64,6 @@ class BaseRepository {
   delete(id, options = {}) {
     return this.Model.destroy({ where: { id }, ...options });
   }
-
-  forceDelete(id, options = {}) {
-    return this.Model.destroy({ where: { id }, force: true, ...options });
-  }
-
-  restore(id, options = {}) {
-    return this.Model.restore({ where: { id }, ...options });
-  }
-
-  async exists(id, options = {}) {
-    const count = await this.Model.count({ where: { id }, ...options });
-    return count > 0;
-  }
 }
 
 module.exports = BaseRepository;

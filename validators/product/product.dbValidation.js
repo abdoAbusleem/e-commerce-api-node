@@ -1,18 +1,21 @@
-const { checkExists } = require('../../helpers/dbValidation.helper');
+const { checkExists } = require('../../helpers');
 const CategoryRepository = require('../../repositories/category.repository');
 const BrandRepository = require('../../repositories/brand.repository');
-const { validateSubCategoriesInCategory } = require('../subcategory/subcategory.dbValidation');
+const { validateSubCategoriesInCategory } = require('../shared/entity-validators');
 
 async function validateProductData(productData, subCategoryIds, categoryId) {
-  const targetCategoryId = categoryId || productData.categoryId;
+  const resolveCategoryId = categoryId || productData.categoryId;
 
-  const [category, brand, subCategories] = await Promise.all([
-    checkExists(CategoryRepository, targetCategoryId, 'Category'),
-    checkExists(BrandRepository, productData.brandId, 'Brand'),
-    validateSubCategoriesInCategory(subCategoryIds, targetCategoryId),
-  ]);
+  const validations = [
+    resolveCategoryId && checkExists(CategoryRepository, resolveCategoryId, 'category'),
 
-  return { category, brand, subCategories };
+    productData.brandId && checkExists(BrandRepository, productData.brandId, 'brand'),
+
+    subCategoryIds?.length > 0 &&
+      validateSubCategoriesInCategory(subCategoryIds, resolveCategoryId),
+  ].filter(Boolean);
+
+  await Promise.all(validations);
 }
 
 module.exports = {

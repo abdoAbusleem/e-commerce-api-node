@@ -6,12 +6,9 @@ const {
   updateBrand,
   deleteBrand,
 } = require('../controllers/brand.controller');
-const {
-  createBrandSchema,
-  brandUpdateSchema,
-  idParamSchema,
-} = require('../validators/brand/brand.schema');
-const validate = require('../middlewares/validatorMiddlleware');
+const { createBrandSchema, brandUpdateSchema } = require('../validators/brand/brand.schema');
+const { idParamSchema } = require('../validators/shared/id.schema');
+const { validate } = require('../middlewares');
 
 const router = express.Router();
 

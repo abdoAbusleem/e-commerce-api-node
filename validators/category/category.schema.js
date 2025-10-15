@@ -7,10 +7,6 @@ const createCategorySchema = Joi.object({
 
 const updateCategorySchema = createCategorySchema.fork(['name'], schema => schema.optional());
 
-const idParamSchema = Joi.object({
-  id: Joi.string().uuid().required(),
-});
-
 const NestedRouteParams = Joi.object({
   categoryId: Joi.string().uuid().required(),
 });
@@ -18,6 +14,5 @@ const NestedRouteParams = Joi.object({
 module.exports = {
   createCategorySchema,
   updateCategorySchema,
-  idParamSchema,
   NestedRouteParams,
 };

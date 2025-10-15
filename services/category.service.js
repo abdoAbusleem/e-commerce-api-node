@@ -1,8 +1,10 @@
 const CategoryRepository = require('../repositories/category.repository');
-const { throwNotFound } = require('../utils/errors');
+const { throwNotFound } = require('../utils');
+const { validateCategoryData } = require('../validators/category/category.dbValidation');
 
 class CategoryService {
   async createCategory(data) {
+    await validateCategoryData(data.name);
     const category = await CategoryRepository.create(data);
     return category;
   }
@@ -28,16 +30,18 @@ class CategoryService {
   }
 
   async updateCategory(id, data) {
-    const exists = await CategoryRepository.exists(id);
-    if (!exists) throwNotFound('category', id);
+    const category = await CategoryRepository.findById(id);
+    if (!category) throwNotFound('category', id);
 
-    const category = await CategoryRepository.update(id, data);
-    return category;
+    await validateCategoryData(data.name, id);
+
+    const updatedCategory = await CategoryRepository.update(id, data);
+    return updatedCategory;
   }
 
   async deleteCategory(id) {
-    const exists = await CategoryRepository.exists(id);
-    if (!exists) throwNotFound('category', id);
+    const category = await CategoryRepository.findById(id);
+    if (!category) throwNotFound('category', id);
 
     await CategoryRepository.delete(id);
   }

@@ -1,5 +1,5 @@
 // helpers/transactionHelper.js
-const sequelize = require('../config/database');
+const { sequelize } = require('../config');
 
 async function withTransaction(callback) {
   const transaction = await sequelize.transaction();
